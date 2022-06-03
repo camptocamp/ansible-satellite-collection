@@ -1,0 +1,12 @@
+---
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - ansible-galaxy collection build
+  artifacts:
+    paths:
+      - camptocamp-satellite-*.tar.gz
+ 
