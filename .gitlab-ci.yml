@@ -3,6 +3,7 @@ stages:
   - build
 
 build:
+  image: quay.io/ansible/galaxy
   stage: build
   script:
     - ansible-galaxy collection build
