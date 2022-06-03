@@ -6,7 +6,7 @@ build:
   image: quay.io/ansible/galaxy:v3.4.15
   stage: build
   script:
-    - ansible-galaxy collection build
+    - /usr/share/galaxy/venv/bin/ansible-galaxy collection build
   artifacts:
     paths:
       - camptocamp-satellite-*.tar.gz
