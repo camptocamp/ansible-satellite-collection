@@ -1,0 +1,13 @@
+- name: 'Pre-Update hook execute'
+  include: "{{ pre_update_hook }}"
+  when: pre_update_hook is defined
+
+- name: 'Update all packages'
+  yum:
+    name: '*'
+    state: latest
+  when: perform_yum_update
+
+- name: 'Post-Update hook execute'
+  include: "{{ post_update_hook }}"
+  when: post_update_hook is defined

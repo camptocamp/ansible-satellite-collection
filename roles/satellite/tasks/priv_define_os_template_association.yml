@@ -1,0 +1,16 @@
+---
+- name: 'Associate default provisionning templates to OS'
+  theforeman.foreman.os_default_template:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+
+    operatingsystem: "{{ operating_system.description }}"
+    template_kind: "{{ item.template_type }}"
+    provisioning_template: "{{ item.template_name }}"
+    state: present
+  with_items: "{{ operating_system.template_associations | default([]) }}"
+  tags:
+  - never
+  - define-infra

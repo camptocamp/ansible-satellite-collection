@@ -1,0 +1,18 @@
+---
+- name: Define Provisionning Template
+  theforeman.foreman.provisioning_template:
+    name: "{{ template | basename }}"
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    kind: "{{ template_source.kind }}"
+    organizations: "{{ template_source.organizations | default(organizations) }}"
+    locations: "{{ template_source.locations | default(locations.keys()) | list }}"
+    file_name: "{{ template }}"
+  with_fileglob: "{{ template_source.globpath }}"
+  loop_control:
+    loop_var: template
+  tags:
+  - never
+  - define-infra

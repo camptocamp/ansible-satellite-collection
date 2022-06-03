@@ -1,0 +1,74 @@
+- name: 'Unregister host'
+  redhat_subscription:
+    state: absent
+  ignore_errors: true
+
+- name: 'Remove old consumer package'
+  yum:
+    name: "katello-ca-consumer-*"
+    state: absent
+  ignore_errors: true
+
+- name: 'Install new consumer package'
+  yum:
+    name: "{{ satellite_url | regex_replace('^https', 'http') }}/pub/katello-ca-consumer-latest.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+
+- name: 'Register machine to satellite'
+  redhat_subscription:
+    state: present
+    org_id: "{{ satellite_organization }}"
+    activationkey: "{{ activationkey }}"
+    rhsm_baseurl: "{{ baseurl }}"
+    server_hostname: "{{ serverurl }}"
+
+- name: 'Install insights-client'
+  yum:
+    name: 'insights-client'
+    state: present
+  ignore_errors: true
+
+- name: 'Re-register to insights'
+  ansible.builtin.command: /usr/bin/insights-client --register
+  ignore_errors: true
+
+- name: 'Remove Katello-agent package (with deps)'
+  yum:
+    name: "katello-agent"
+    autoremove: true
+    state: absent
+  ignore_errors: true
+- name: 'Remove Katello-agent package'
+  yum:
+    name: "katello-agent"
+    state: absent
+  ignore_errors: true
+- name: 'Remove Katello-agent problematic dep'
+  yum:
+    name: "gofer"
+    state: absent
+  ignore_errors: true
+
+- name: 'Install Katello host-tools'
+  yum:
+    name: 'katello-host-tools'
+    state: present
+
+- name: 'Install Katello host-tools-tracer'
+  yum:
+    name: 'katello-host-tools-tracer'
+    state: present
+
+#- name: 'Waiting confirmation for update of packages'
+#  pause:
+#    prompt: 'Press enter to update packages and reboot the machine. Press Ctrl+c and then "a" to abort.'
+#
+#- name: 'Update all packages'
+#  yum:
+#    name: '*'
+#    state: latest
+#
+#- name: 'Reboot the server'
+#  reboot:
+#    reboot_timeout: 3600
