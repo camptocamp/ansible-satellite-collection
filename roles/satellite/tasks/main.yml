@@ -46,8 +46,8 @@
       g_prod_hostgroup_is_globalvar: "{{ prod_hostgroup is defined }}"
 
   - set_fact:
-      g_test_lifecycleenvironment_defined: "{{ g_test_lifecycleenvironment_is_groupvar or g_test_lifecycleenvironment_is_globalvar }}"
-      g_prod_lifecycleenvironment_defined: "{{ g_prod_lifecycleenvironment_is_groupvar or g_prod_lifecycleenvironment_is_globalvar }}"
+      g_test_lifecycleenvironment_defined: "{{ ( g_test_lifecycleenvironment_is_groupvar or g_test_lifecycleenvironment_is_globalvar ) and deploymentcontentview is defined }}"
+      g_prod_lifecycleenvironment_defined: "{{ ( g_prod_lifecycleenvironment_is_groupvar or g_prod_lifecycleenvironment_is_globalvar ) and deploymentcontentview is defined }}"
 
       g_test_activationkey_defined: "{{ g_test_activationkey_is_groupvar or g_test_activationkey_is_globalvar }}"
       g_prod_activationkey_defined: "{{ g_prod_activationkey_is_groupvar or g_prod_activationkey_is_globalvar }}"
