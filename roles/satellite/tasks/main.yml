@@ -380,7 +380,7 @@
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ item.name }}"
     organization: "{{ satellite_organization }}"
-    repositories: "{{ item.repositories | default([]) | map('whitelist_contentview_attr') | list }}"
+    repositories: "{{ item.repositories | default([]) | map('camptocamp.satellite.whitelist_contentview_attr') | list }}"
   with_items: "{{ contentviews | default([]) }}"
   tags:
   - never
