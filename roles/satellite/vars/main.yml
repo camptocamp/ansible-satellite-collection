@@ -1,0 +1,247 @@
+# The organization where the role will be doing the modifications.
+# Some configurations are not inside an Organization and will ignore this setting.
+satellite_organization: Camptocamp
+
+# The variables prefixed with prod_ and test_  are made available to allow defining the variable
+# without having a machine in the group (since to use group variables you must pass through a machine.
+
+# (optional) Name of the Life Cycle Environment for production, this can be set in the group variable lifecycleenvironment.
+prod_lifecycleenvironment: osbase-rhel8-prod
+# (optional) Name of the Activation Key for production, this can be set in the group variable activationkey.
+prod_activationkey: ak-osbase-rhel8-prod
+# (optional) Name of the Hostgroup for production, this can be set in the group variable hostgroup.
+prod_hostgroup: osbase-rhel8-prod
+# (optional) Name of the parent hostgroup for production hostgroup, this can be set in the group variable hostgroup_parent.
+prod_hostgroup_parent: stable4-rhel8
+
+# (optional) Name of the Life Cycle Environment for test, this can be set in the group variable lifecycleenvironment.
+test_lifecycleenvironment: osbase-rhel8-test
+# (optional) Name of the Activation Key for test, this can be set in the group variable activationkey.
+test_activationkey: ak-osbase-rhel8-test
+# (optional) Name of the Hostgroup for test, this can be set in the group variable hostgroup.
+test_hostgroup: osbase-rhel8-test
+# (optional) Name of the parent hostgroup for production hostgroup, this can be set in the group variable hostgroup_parent.
+test_hostgroup_parent: staging4-rhel8
+
+# (optional) This is the name of the Content View that will be used for Promotions
+# This can be a Composite Content View.
+deploymentcontentview: 'OS Base RHEL8'
+
+# The locations where objects created will be available in the Satellite Server.
+locations:
+  Default:
+
+# (optional) Definition of the Content Views that will be created.
+contentviews:
+- name: 'OS Base RHEL8'
+  # This is the list of repositories that will be included in the Content View, note that Red Hat
+  # repositories need to be enabled in `redhat_repositories` variable (see below) and the other products
+  # need to be created using the `custom_repositories` variable (see below).
+  repositories:
+
+  - product: 'Red Hat Enterprise Linux for x86_64'
+    name: 'Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 RPMs'
+  - product: 'Red Hat Enterprise Linux for x86_64'
+    name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream RPMs 8'
+  - product: 'Red Hat Enterprise Linux for x86_64'
+    name: 'Red Hat Enterprise Linux 8 for x86_64 - Supplementary RPMs 8'
+  - product: 'Red Hat Enterprise Linux for x86_64'
+    name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS RPMs 8'
+  - product: 'Red Hat Ansible Engine'
+    name: 'Red Hat Ansible Engine 2 for RHEL 8 x86_64 RPMs'
+
+  - product: 'Puppet for RHEL8'
+    name: 'puppet6 for RHEL8'
+    # This key tells the role to not try to synchronize packages from the upstream url.
+    synchronize: false
+
+# (optional) List of Composite Content Views That will be created.
+compositecontentviews:
+  - name: 'My Composite with RHEL8'
+    components:
+      - content_view: 'OS Base RHEL8'
+        latest: true
+      - content_view: 'Some other Content View'
+        content_view_version: 72
+
+# (optional) List of subscriptions that will be attached when using the Activation Key.
+subscriptions:
+  # Can use the name of the subcription or the Pool ID using `pool_id`/`upstream_pool_id` instead of `name`.
+  - name: "Red Hat Enterprise Linux Academic Site Subscription with Smart Management + Satellite, Standard (Server, Desktop, Workstation, POWER, HPC, Per FTE)"
+  - name: 'Puppet for RHEL8'
+
+# (optional) List of Red Hat Repositories to enable
+# The way Red Hat organized the Repositories in Satellite is not easy to understand.
+# You most likely need to filter using `architectures` by specifying either `releasever` or other things, but not always (specially
+# not with RHEL8). Navigate the katello api in your satellite instance to find what needs to be enabled, or try to put a releasever 
+# that does not exist on purpose ansible should tell you which exists (does not work with names of repository_sets/products).
+redhat_repositories:
+- product: 'Red Hat Enterprise Linux for x86_64'
+  name: 'Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 (RPMs)'
+
+- product: 'Red Hat Enterprise Linux for x86_64'
+  name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)'
+  architectures:
+  - releasever: "8"
+
+- product: 'Red Hat Enterprise Linux for x86_64'
+  name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)'
+  architectures:
+  - releasever: "8"
+
+- product: 'Red Hat Enterprise Linux for x86_64'
+  name: 'Red Hat Enterprise Linux 8 for x86_64 - Supplementary (RPMs)'
+  architectures:
+  - releasever: "8"
+
+- product: 'Red Hat Ansible Engine'
+  name: 'Red Hat Ansible Engine 2 for RHEL 8 x86_64 (RPMs)'
+
+# (optional) List of Custom Repositories/Products that will be created.
+custom_repositories:
+ - product: 'Puppet for RHEL8'
+   gpgkey: |
+     Put the GPG key of the repository here
+     It will be used to validate the RPMs by the hosts when installing packages.
+
+   # (optional) Yum repositories to create in Satellite, url is optional, it will create a repository where you can
+   # manually push RPMs. If URL is specified it will need to be synchronized.
+   yum_repositories:
+   - name: 'puppet6 for RHEL8'
+     url: 'https://yum.puppetlabs.com/puppet6/el/8/x86_64/'
+
+  # Docker image repositories to synchronize in Satellite. All image tags will be synchronized by satellite without
+  # any kind of filtering.
+  docker_repositories:
+    - name: docker-image
+      # the URL of the registry to use defaults to https://registry-1.docker.io/
+      url: https://optional/registry/repo 
+      # full name of the repository in the upstream registry (without the tags).
+      upstream_name: remote/repo
+
+  # (optional) A List of non-structured repositories of files. You can push files in it as-needed.
+  file_repositories:
+    - name: 'my files'
+
+# (optional) The primary DNS server used by hosts when deploying them can be overriden by network (see below).
+dns_primary: "8.8.8.8"
+
+# (optional) The IP assignment method when deploying hosts (can be `Static` of `DHCP`).
+boot_mode: "Static"
+# (optional) The type of IPAM Satellite should use, see: https://github.com/theforeman/foreman-ansible-modules/blob/master/plugins/modules/subnet.py#L90
+ipam: "None"
+
+# (optional) The Organizations that will be created by the `define-infra` tag.
+organizations:
+  - Camptocamp
+
+# (optional) The definitions of domains that will be created by the `define-infra` tag.
+domains:
+  camptocamp.com:
+    description: Main Camptocamp domain
+
+# (optional) The definition of hostgroups that will be created by the `define-infra` tag.
+# Some of the variables are taken by custom deployment templates made by Camptocamp.
+infra_hostgroups:
+  - name: test-rhel8
+    domain: camptocamp.com
+    architecture: x86_64
+    partition_table: my_table
+    operatingsystem: RHEL Server 8
+    foreman_capsule: satellite-packages.example.com
+    c2c_puppet_disable_revocation: "true"
+    c2c_puppet_shared_key: the-secret-key
+    use_ntp: 'true'
+    redhat_install_agent: 'false'
+    redhat_install_host_tools: 'true'
+    redhat_install_host_tracer_tools: 'true'
+    host_registration_insights: 'true'
+    puppetca_port: some_port
+    puppet_ca_server: puppetca-server.example.com
+    puppetmaster_port: some_port
+    puppetmaster: puppetserver.example.com
+    puppet_environment: test
+    satellite_organization: Camptocamp
+    pxe_loader: PXELinux BIOS
+    package_base_url: https://satellite-packages.example.com/pulp/repos
+    rhsm_url: https://satellite-packages.example.com:8443
+
+# (optional) A list of definitions of how to create provisioning templates from files located where the execution of the playbook happens.
+provisioning_templates:
+  - organizations:
+    - Camptocamp
+    globpath: ../provisionning_templates/c2c-provision/*
+    kind: provision
+    operatingsystems:
+      - RHEL Server 8
+      - RHEL Server 7
+
+# (optional) A list of definitions of installation medias (prefer adding Kickstart repositories to Content Views).
+installation_media: {}
+
+# (optional) A list of operating systems to define using the `define-infra` tag.
+operating_systems:
+- name: RedHat-Server-8
+  description: RHEL Server 8
+  family: Redhat
+  major: 8
+  architectures:
+    - x86_64
+  ptables:
+    - my_custom_partition_table
+  password_hash: SHA512
+  provisioning_templates:
+    - provisionning template 1
+    - provisionning template 2
+    - provisionning template 3
+    - Kickstart default PXELinux
+    - Kickstart default finish
+    - Kickstart default iPXE
+    - Discovery Red Hat kexec
+    - Kickstart default user data
+  template_associations:
+    - template_type: 'PXEGrub2'
+      template_name: 'Kickstart default PXEGrub2'
+    - template_type: 'PXEGrub'
+      template_name: 'Kickstart default PXEGrub'
+    - template_type: 'finish'
+      template_name: 'Kickstart default finish'
+    - template_type: 'user_data'
+      template_name: 'Kickstart default user data'
+    - template_type: 'kexec'
+      template_name: 'Discovery Red Hat kexec'
+    - template_type: 'iPXE'
+      template_name: 'Kickstart default iPXE'
+    - template_type: 'PXELinux'
+      template_name: 'Kickstart default PXELinux'
+    - template_type: 'provision'
+      template_name: 'my custom template 2'
+
+# (optional) A List of partition tables that will be created by the `define-infra` tag.
+partition_tables:
+  my_custom_partition_table:
+    os_family: Redhat
+    # This is the way kickstart defined partition table creation.
+    partition_table: |
+      clearpart --all
+      # here lives the partition scheme.
+
+    # you can override which Organizations this table will be available to.
+    organizations:
+      - Camptocamp
+
+# (optional) A List of network subnet definitions.
+subnets:
+  # this is a name, more or less free but to simplify searching the ip range was chosen as name here.
+  10.180.21.0/24:
+    gateway: "10.180.21.1"
+    network: "10.180.21.0"
+    # somehow it is mandatory to have both the netmask and cidr.
+    cidr: 24
+    mask: "255.255.255.0"
+    organizations:
+      - Camptocamp
+    # (optional) Allows to limit the domains available in a subnet.
+    domains:
+      - "private.example.com"
+
