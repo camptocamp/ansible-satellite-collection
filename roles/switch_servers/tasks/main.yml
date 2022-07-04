@@ -20,8 +20,8 @@
     state: present
     org_id: "{{ satellite_organization }}"
     activationkey: "{{ activationkey }}"
-    rhsm_baseurl: "{{ baseurl }}"
-    server_hostname: "{{ serverurl }}"
+    rhsm_baseurl: "{{ package_baseurl | default omit }}"
+    server_hostname: "{{ subscription_url | default omit }}"
 
 - name: 'Install insights-client'
   yum:
