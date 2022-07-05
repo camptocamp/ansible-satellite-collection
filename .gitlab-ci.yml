@@ -6,8 +6,8 @@ build:
   image: quay.io/ansible/galaxy:v3.4.15
   stage: build
   script:
+    - sed "s/SNAPSHOT/${CI_COMMIT_REF_NAME}/" -i galaxy.yml
     - /usr/share/galaxy/venv/bin/ansible-galaxy collection build
   artifacts:
     paths:
       - camptocamp-satellite-*.tar.gz
- 
