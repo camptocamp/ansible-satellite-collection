@@ -20,7 +20,7 @@ The variables this role takes and their explanation are defined in `roles/satell
 
 #### Usable Tags
 
-The playbook is all-in-one management of satellite. Actions to be performed by the playbook are defined using a tag in the playbook. To avoid mis-usages, if no tag is specified, no action is performed.
+The role is all-in-one management of satellite. Actions to be performed by the role are defined using a tag in the role. To avoid mis-usages, if no tag is specified, no action is performed.
 
 The tags are defined as follows:
 
@@ -49,6 +49,8 @@ This role will go over machines it is applied to and reconfigure the subscriptio
 Some mandatory variables must be set for the role to work as expected see the `role/switch_servers/vars/main.yml` file for their definitions.
 
 ### update_hosts
+
+This role allows to update the machines automatically, allowing to hook the process.
 
 #### Update Hooks
 
