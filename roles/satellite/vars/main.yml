@@ -110,18 +110,18 @@ custom_repositories:
    - name: 'puppet6 for RHEL8'
      url: 'https://yum.puppetlabs.com/puppet6/el/8/x86_64/'
 
-  # Docker image repositories to synchronize in Satellite. All image tags will be synchronized by satellite without
-  # any kind of filtering.
-  docker_repositories:
-    - name: docker-image
-      # the URL of the registry to use defaults to https://registry-1.docker.io/
-      url: https://optional/registry/repo 
-      # full name of the repository in the upstream registry (without the tags).
-      upstream_name: remote/repo
+   # Docker image repositories to synchronize in Satellite. All image tags will be synchronized by satellite without
+   # any kind of filtering.
+   docker_repositories:
+     - name: docker-image
+       # the URL of the registry to use defaults to https://registry-1.docker.io/
+       url: https://optional/registry/repo 
+       # full name of the repository in the upstream registry (without the tags).
+       upstream_name: remote/repo
 
-  # (optional) A List of non-structured repositories of files. You can push files in it as-needed.
-  file_repositories:
-    - name: 'my files'
+   # (optional) A List of non-structured repositories of files. You can push files in it as-needed.
+   file_repositories:
+     - name: 'my files'
 
 # (optional) The primary DNS server used by hosts when deploying them can be overriden by network (see below).
 dns_primary: "8.8.8.8"
