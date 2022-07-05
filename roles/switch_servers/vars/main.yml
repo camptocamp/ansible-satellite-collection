@@ -1,18 +1,18 @@
 ---
 
-# URL to access the Satellite server (root)
-satellite_url: https://satellite.example.com
-
-# Name of the Satellite Organization where the machine needs to be registered
-satellite_organization: MyOrg
-
-# Activation Key to use to register the machine into Satellite
-activationkey: my_activation_key
-
-# (optional) URL to use for accessing the packages.
-# Used to override the default value in case packages are served by a load-balanced capsule setup 
-package_baseurl: https://satellite.example.com/pulp/repos
-
-# (optional) URL to use for registering the satellite server.
-# Used to override the default when subscriptions are served by a load-balancer capsule setup.
-subscription_url: https://satellite.example.com:8443
+## URL to access the Satellite server (root)
+#satellite_url: https://satellite.example.com
+#
+## Name of the Satellite Organization where the machine needs to be registered
+#satellite_organization: MyOrg
+#
+## Activation Key to use to register the machine into Satellite
+#activationkey: my_activation_key
+#
+## (optional) URL to use for accessing the packages.
+## Used to override the default value in case packages are served by a load-balanced capsule setup 
+#package_baseurl: https://satellite.example.com/pulp/repos
+#
+## (optional) URL to use for registering the satellite server.
+## Used to override the default when subscriptions are served by a load-balancer capsule setup.
+#subscription_url: https://satellite.example.com:8443
