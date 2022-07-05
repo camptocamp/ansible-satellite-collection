@@ -59,3 +59,8 @@ It is possible to add hooks to the update process by setting variables:
 - `pre_update_hook` allow to execute tasks before the `yum update`
 - `post_update_hook` allow to execute tasks after the `yum upadte`
 - `perform_yum_update` a boolean controlling the execution of the `yum update` the value is `false` by default
+
+
+## Releasing
+
+The collection is automatically built by gitlab-ci, to release a new version just tag it with the new version number. For example: `1.0.3` and it will be built and pushed into the gitlab artifacts storage.
