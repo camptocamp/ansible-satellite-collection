@@ -46,10 +46,14 @@ This role will go over machines it is applied to and reconfigure the subscriptio
 
 #### Variables
 
-Some mandatory variables must be set for the role to work as expected see the `role/update_hosts/vars/main.yml` file for their definitions.
+Some mandatory variables must be set for the role to work as expected see the `role/switch_servers/vars/main.yml` file for their definitions.
 
 ### update_hosts
 
 #### Update Hooks
 
-It is possible to add hooks to the update process.
+It is possible to add hooks to the update process by setting variables:
+
+- `pre_update_hook` allow to execute tasks before the `yum update`
+- `post_update_hook` allow to execute tasks after the `yum upadte`
+- `perform_yum_update` a boolean controlling the execution of the `yum update` the value is `false` by default
