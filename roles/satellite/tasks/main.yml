@@ -119,7 +119,7 @@
 
 # promote contentview from Library->test
 - include_tasks:
-    file: internals/promote-contentview.yml
+    file: internals/contentview-promote.yml
     apply:
       tags:
         - define
@@ -188,7 +188,7 @@
   - deprovision
 
 - include_tasks:
-    file: internals/compositecontentviews-deprovision.yml
+    file: internals/compositecontentview-deprovision.yml
     apply:
       tags:
         - never
@@ -198,7 +198,7 @@
     - deprovision
 
 - include_tasks:
-    file: internals/contentviews-deprovision.yml
+    file: internals/contentview-deprovision.yml
     apply:
       tags:
         - never
