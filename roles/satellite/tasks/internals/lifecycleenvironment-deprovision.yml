@@ -1,0 +1,24 @@
+- name: 'Delete Lifecycle Environment for prod'
+  theforeman.foreman.lifecycle_environment:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ g_prod_lifecycleenvironment }}"
+    organization: "{{ satellite_organization }}"
+    state: "absent"
+  ignore_errors: yes
+  when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined
+
+- name: 'Delete Lifecycle Environment for test'
+  theforeman.foreman.lifecycle_environment:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ g_test_lifecycleenvironment }}"
+    organization: "{{ satellite_organization }}"
+    state: "absent"
+  ignore_errors: yes
+  when: g_test_lifecycleenvironment_defined
+

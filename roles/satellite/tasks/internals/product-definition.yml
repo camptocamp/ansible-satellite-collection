@@ -1,0 +1,75 @@
+- name: 'Define GPG keys for products'
+  theforeman.foreman.content_credential:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    name: "{{ item.product }}"
+    content_type: gpg_key
+    content: "{{ item.gpgkey }}"
+    #  when: item.gpgkey is defined
+  with_items: "{{ custom_repositories | default([]) }}"
+
+- name: 'Define custom products'
+  theforeman.foreman.product:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ item.product }}"
+    organization: "{{ satellite_organization }}"
+    gpg_key: "{{ item.product }}" #"{{ omit if item.gpg_key is defined or item.product }}"
+    state: present
+  with_items: "{{ custom_repositories | default([]) }}"
+
+- name: 'Define custom RPM Repositories'
+  theforeman.foreman.repository:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    product: "{{ item.0.product }}"
+    name: "{{ item.1.name }}"
+    url: "{{ item.1.url | default('') }}"
+    download_policy: immediate
+    mirror_on_sync: true
+    content_type: "yum"
+  with_subelements:
+  - "{{ custom_repositories | default({}) }}"
+  - yum_repositories
+  - skip_missing: True
+
+- name: 'Define custom Docker Repositories'
+  theforeman.foreman.repository:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    product: "{{ item.0.product }}"
+    name: "{{ item.1.name }}"
+    url: "{{ item.1.url | default('https://registry-1.docker.io/') }}"
+    docker_upstream_name: "{{ item.1.upstream_name }}"
+    mirror_on_sync: true
+    content_type: "docker"
+  with_subelements:
+  - "{{ custom_repositories | default({}) }}"
+  - docker_repositories
+  - skip_missing: True
+
+- name: 'Define custom file Repositories'
+  theforeman.foreman.repository:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    product: "{{ item.0.product }}"
+    name: "{{ item.1.name }}"
+    content_type: "file"
+  with_subelements:
+  - "{{ custom_repositories | default({}) }}"
+  - file_repositories
+  - skip_missing: True

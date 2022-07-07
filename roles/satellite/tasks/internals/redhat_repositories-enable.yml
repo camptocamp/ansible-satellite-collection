@@ -1,0 +1,13 @@
+- name: Enable Red Hat Repositories
+  theforeman.foreman.repository_set:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ item.name }}"
+    organization: "{{ satellite_organization }}"
+    product: "{{ item.product }}"
+    repositories: "{{ item.architectures | default(omit) }}"
+    all_repositories: "{{ 'false' if item.architectures is defined else 'true' }}"
+    state: enabled
+  with_items: "{{ redhat_repositories | default([]) }}"

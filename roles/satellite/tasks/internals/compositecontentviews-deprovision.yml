@@ -1,0 +1,13 @@
+- name: "Delete CompositeContentViews"
+  theforeman.foreman.content_view:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    composite: true
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ item.name }}"
+    organization: "{{ satellite_organization }}"
+    components: "{{ item.components }}"
+    state: absent
+  ignore_errors: yes
+  with_items: "{{ compositecontentviews | default([]) }}"

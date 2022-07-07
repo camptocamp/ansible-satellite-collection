@@ -1,804 +1,218 @@
 ---
-- name: Collect facts about Activation Keys / Hostgroups / LifeCycle Environments
-  block:
-  - set_fact:
-      g_test_lifecycleenvironment_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ('lifecycleenvironment' in hostvars[groups['test'][0]]) }}"
-      g_prod_lifecycleenvironment_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ('lifecycleenvironment' in hostvars[groups['prod'][0]]) }}"
-
-      g_test_activationkey_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ('activationkey' in hostvars[groups['test'][0]]) }}"
-      g_prod_activationkey_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ('activationkey' in hostvars[groups['prod'][0]]) }}"
-
-      g_test_hostgroup_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ('hostgroup' in hostvars[groups['test'][0]]) }}"
-      g_prod_hostgroup_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ('hostgroup' in hostvars[groups['prod'][0]]) }}"
-
-      g_test_domain_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'domain' in hostvars[groups['test'][0]] ) }}"
-      g_prod_domain_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'domain' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_architecture_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'architecture' in hostvars[groups['test'][0]] ) }}"
-      g_prod_architecture_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'architecture' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_partition_table_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'partition_table' in hostvars[groups['test'][0]] ) }}"
-      g_prod_partition_table_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'partition_table' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_operatingsystem_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'operatingsystem' in hostvars[groups['test'][0]] ) }}"
-      g_prod_operatingsystem_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'operatingsystem' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_medium_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'medium' in hostvars[groups['test'][0]] ) }}"
-      g_prod_medium_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'medium' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_foreman_capsule_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'foreman_capsule' in hostvars[groups['test'][0]] ) }}"
-      g_prod_foreman_capsule_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'foreman_capsule' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_hostgroup_parent_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'hostgroup_parent' in hostvars[groups['test'][0]] ) }}"
-      g_prod_hostgroup_parent_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'hostgroup_parent' in hostvars[groups['prod'][0]] ) }}"
-
-      g_test_pxe_loader_is_groupvar: "{{ (groups['test'] | default([]) | length>0) and ( 'pxe_loader' in hostvars[groups['test'][0]] ) }}"
-      g_prod_pxe_loader_is_groupvar: "{{ (groups['prod'] | default([]) | length>0) and ( 'pxe_loader' in hostvars[groups['prod'][0]] ) }}"
-
-  - set_fact:
-      g_test_lifecycleenvironment_is_globalvar: "{{ test_lifecycleenvironment is defined }}"
-      g_prod_lifecycleenvironment_is_globalvar: "{{ prod_lifecycleenvironment is defined }}"
-
-      g_test_activationkey_is_globalvar: "{{ test_activationkey is defined }}"
-      g_prod_activationkey_is_globalvar: "{{ prod_activationkey is defined }}"
-
-      g_test_hostgroup_is_globalvar: "{{ test_hostgroup is defined }}"
-      g_prod_hostgroup_is_globalvar: "{{ prod_hostgroup is defined }}"
-
-  - set_fact:
-      g_test_lifecycleenvironment_defined: "{{ ( g_test_lifecycleenvironment_is_groupvar or g_test_lifecycleenvironment_is_globalvar ) and deploymentcontentview is defined }}"
-      g_prod_lifecycleenvironment_defined: "{{ ( g_prod_lifecycleenvironment_is_groupvar or g_prod_lifecycleenvironment_is_globalvar ) and deploymentcontentview is defined }}"
-
-      g_test_activationkey_defined: "{{ g_test_activationkey_is_groupvar or g_test_activationkey_is_globalvar }}"
-      g_prod_activationkey_defined: "{{ g_prod_activationkey_is_groupvar or g_prod_activationkey_is_globalvar }}"
-
-      g_test_hostgroup_defined: "{{ g_test_hostgroup_is_groupvar or g_test_hostgroup_is_globalvar }}"
-      g_prod_hostgroup_defined: "{{ g_prod_hostgroup_is_groupvar or g_prod_hostgroup_is_globalvar }}"
-
-  - set_fact:
-      g_test_lifecycleenvironment: "{{ hostvars[groups['test'][0]]['lifecycleenvironment'] if g_test_lifecycleenvironment_is_groupvar else test_lifecycleenvironment }}"
-    when: g_test_lifecycleenvironment_defined
-
-  - set_fact:
-      g_prod_lifecycleenvironment: "{{ hostvars[groups['prod'][0]]['lifecycleenvironment'] if g_prod_lifecycleenvironment_is_groupvar else prod_lifecycleenvironment }}"
-    when: g_prod_lifecycleenvironment_defined
-
-  - set_fact:
-      g_test_activationkey: "{{ hostvars[groups['test'][0]]['activationkey'] if g_test_activationkey_is_groupvar else test_activationkey }}"
-    when: g_test_activationkey_defined
-
-  - set_fact:
-      g_prod_activationkey: "{{ hostvars[groups['prod'][0]]['activationkey'] if g_prod_activationkey_is_groupvar else prod_activationkey }}"
-    when: g_prod_activationkey_defined
-
-  - set_fact:
-      g_test_hostgroup: "{{ hostvars[groups['test'][0]]['hostgroup'] if g_test_hostgroup_is_groupvar else test_hostgroup }}"
-    when: g_test_hostgroup_defined
-
-  - set_fact:
-      g_prod_hostgroup: "{{ hostvars[groups['prod'][0]]['hostgroup'] if g_prod_hostgroup_is_groupvar else prod_hostgroup }}"
-    when: g_prod_hostgroup_defined
-
+- include_tasks:
+    file: internals/facts-gathering.yml
+    apply:
+      tags:
+        - always
   tags:
-  - always
+    - always
 
-- include: internals/initial-define-infra.yml
-
-- name: 'Define GPG keys for products'
-  theforeman.foreman.content_credential:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    name: "{{ item.product }}"
-    content_type: gpg_key
-    content: "{{ item.gpgkey }}"
+- include_tasks:
+    file: internals/initial-define-infra.yml
+    apply:
+      tags:
+        - define-infra
+        - never
   tags:
-  - never
-  - define
-  - change
-    #  when: item.gpgkey is defined
-  with_items: "{{ custom_repositories | default([]) }}"
+    - define-infra
+    - never
 
-- name: 'Define custom products'
-  theforeman.foreman.product:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.product }}"
-    organization: "{{ satellite_organization }}"
-    gpg_key: "{{ item.product }}" #"{{ omit if item.gpg_key is defined or item.product }}"
-    state: present
+- include_tasks:
+    file: internals/redhat_repositories-enable.yml
+    apply:
+      tags:
+        - define-infra
+        - change
+        - never
   tags:
-  - never
-  - define
-  - change
-  with_items: "{{ custom_repositories | default([]) }}"
+    - define-infra
+    - change
+    - never
 
-- name: 'Define custom RPM Repositories'
-  theforeman.foreman.repository:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    product: "{{ item.0.product }}"
-    name: "{{ item.1.name }}"
-    url: "{{ item.1.url | default('') }}"
-    download_policy: immediate
-    mirror_on_sync: true
-    content_type: "yum"
+- include_tasks:
+    file: internals/product-definition.yml
+    apply:
+      tags:
+        - define
+        - change
+        - never
   tags:
-  - never
-  - define
-  - change
-  with_subelements:
-  - "{{ custom_repositories | default({}) }}"
-  - yum_repositories
-  - skip_missing: True
+    - define
+    - change
+    - never
 
-- name: 'Define custom Docker Repositories'
-  theforeman.foreman.repository:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    product: "{{ item.0.product }}"
-    name: "{{ item.1.name }}"
-    url: "{{ item.1.url | default('https://registry-1.docker.io/') }}"
-    docker_upstream_name: "{{ item.1.upstream_name }}"
-    mirror_on_sync: true
-    content_type: "docker"
+- include_tasks:
+    file: internals/repository-sync.yml
+    apply:
+      tags:
+        - define
+        - sync
+        - never
   tags:
-  - never
-  - define
-  - change
-  with_subelements:
-  - "{{ custom_repositories | default({}) }}"
-  - docker_repositories
-  - skip_missing: True
+    - define
+    - sync
+    - never
 
-- name: 'Define custom file Repositories'
-  theforeman.foreman.repository:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    product: "{{ item.0.product }}"
-    name: "{{ item.1.name }}"
-    content_type: "file"
+- include_tasks:
+    file: internals/contentview-definition.yml
+    apply:
+      tags:
+        - define
+        - change
+        - never
   tags:
-  - never
-  - define
-  - change
-  with_subelements:
-  - "{{ custom_repositories | default({}) }}"
-  - file_repositories
-  - skip_missing: True
+    - define
+    - change
+    - never
 
-
-- name: 'Init Repository list'
-  set_fact:
-    repository_list_to_sync: []
+- include_tasks:
+    file: internals/contentview-publish.yml
+    apply:
+      tags:
+        - define
+        - publish
+        - update-test
+        - never
   tags:
-  - never
-  - sync
-  - define
+    - define
+    - change
+    - never
+    - update-test
 
-- name: Collect Repositories used in ContentViews
-  set_fact:
-    repository_list_to_sync: "{{ repository_list_to_sync + item.repositories }}"
+- include_tasks:
+    file: internals/compositecontentview-definition.yml
+    apply:
+      tags:
+        - define
+        - change
+        - never
   tags:
-  - never
-  - sync
-  - define
-  with_items: "{{ contentviews | default([]) }}"
+    - define
+    - change
+    - never
 
-- name: 'Start sync of Repositories'
-  theforeman.foreman.repository_sync:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    product: "{{ item.product }}"
-    repository:  "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-  when: item.synchronize | default(True)
-  loop: "{{ repository_list_to_sync | default([]) | list }}"
-  loop_control:
-    pause: 3
-  async: 999999
-  poll: 0
-  register: g_repo_sync_sleeper
+- include_tasks:
+    file: internals/compositecontentview-publish.yml
+    apply:
+      tags:
+        - define
+        - publish
+        - update-test
+        - never
   tags:
-  - never
-  - sync
-  - define
+    - define
+    - change
+    - never
+    - update-test
 
-- name: 'Wait until all Syncs have finished'
-  async_status:
-    jid: "{{ repo_sync_sleeper_item.ansible_job_id }}"
-  loop: "{{ g_repo_sync_sleeper.results }}"
-  loop_control:
-    loop_var: repo_sync_sleeper_item
-  when: repo_sync_sleeper_item.ansible_job_id is defined # Skip items that were skipped in the previous task
-  register: async_job_result
-  until: async_job_result.finished
-  retries: 9999
-  delay: 10
+- include_tasks:
+    file: internals/lifecycleenvironment-definition.yml
+    apply:
+      tags:
+        - define
+        - change
+        - never
   tags:
-  - never
-  - sync
-  - define
+    - define
+    - change
+    - never
 
-- name: 'Define ContentViews'
-  theforeman.foreman.content_view:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-    repositories: "{{ item.repositories | default([]) | map('camptocamp.satellite.whitelist_contentview_attr') | list }}"
-  with_items: "{{ contentviews | default([]) }}"
-  tags:
-  - never
-  - define
-  - change
-
-- name: 'Define ContentView Filters'
-  include: priv_define_filter_contentview.yml
-  with_subelements:
-  - "{{ contentviews | default({}) }}"
-  - repositories
-  - skip_missing: True
-  tags:
-  - never
-  - define
-  - change
-  loop_control:
-    loop_var: contentview_repo
-
-- name: 'Defining Lifecycle Environment for test'
-  theforeman.foreman.lifecycle_environment:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_test_lifecycleenvironment }}"
-    prior: Library
-    organization: "{{ satellite_organization }}"
-    label: "{{ g_test_lifecycleenvironment }}"
-  tags:
-  - never
-  - define
-  - change
+# promote contentview from Library->test
+- include_tasks:
+    file: internals/promote-contentview.yml
+    apply:
+      tags:
+        - define
+        - change
+        - update-test
+        - never
+  vars:
+    target_lce_name: "{{ g_test_lifecycleenvironment }}"
+    source_lce_name: Library
   when: g_test_lifecycleenvironment_defined
-
-- name: 'Defining Lifecycle Environment for prod'
-  theforeman.foreman.lifecycle_environment:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_prod_lifecycleenvironment }}"
-    prior: "{{ g_test_lifecycleenvironment }}"
-    organization: "{{ satellite_organization }}"
-    label: "{{ g_prod_lifecycleenvironment }}"
   tags:
-  - never
-  - define
-  - change
+    - define
+    - update-test
+    - never
+
+# promote contentview from test->prod
+- include_tasks:
+    file: internals/promote-contentview.yml
+    apply:
+      tags:
+        - define
+        - change
+        - update-prod
+        - never
+  vars:
+    target_lce_name: "{{ g_prod_lifecycleenvironment }}"
+    source_lce_name: "{{ g_test_lifecycleenvironment }}"
   when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined
-
-- name: "Start Publish of ContentViews"
-  theforeman.foreman.content_view_version:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    content_view: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
   tags:
-  - never
-  - define
-  - publish
-  - update-test
-  with_items: "{{ contentviews | default([]) }}"
-  async: 999999
-  poll: 0
-  register: g_contentview_publish_sleeper
+    - define
+    - update-prod
+    - never
 
-- name: 'Wait until all ContentViews have published'
-  async_status:
-    jid: "{{ contentview_publish_sleeper_item.ansible_job_id }}"
-  loop: "{{ g_contentview_publish_sleeper.results }}"
-  loop_control:
-    loop_var: contentview_publish_sleeper_item
-  when: contentview_publish_sleeper_item.ansible_job_id is defined  # Skip items that were skipped in the previous task
-  register: async_job_result2
-  until: async_job_result2.finished
-  retries: 9999
-  delay: 10
+- include_tasks:
+    file: internals/activationkey-hostgroup-definition.yml
+    apply:
+      tags:
+        - define
+        - change
+        - never
   tags:
-  - never
-  - define
-  - publish
-  - update-test
+    - define
+    - change
+    - never
 
-- name: 'Define CompositeContentViews'
-  theforeman.foreman.content_view:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    composite: true
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-    components: "{{ item.components }}"
-  with_items: "{{ compositecontentviews | default([]) }}"
+## All provisionning tasks are finished, will start defining the decommissioning tasks
+
+- include_tasks:
+    file: internals/activationkey-hostgroups-deprovision.yml
+    apply:
+      tags:
+        - never
+        - deprovision
   tags:
-  - never
-  - define
-  - change
+    - never
+    - deprovision
 
-- name: "Publish of Composite ContentViews"
-  theforeman.foreman.content_view_version:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    content_view: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - publish
-  - update-test
-  with_items: "{{ compositecontentviews | default([]) }}"
-
-- name: "Promote {{ deploymentcontentview }} ContentView to test"
-  theforeman.foreman.content_view_version:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    content_view: "{{ deploymentcontentview }}"
-    current_lifecycle_environment: Library
-    lifecycle_environments: "{{ g_test_lifecycleenvironment }}"
-    organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - update-test
-  when: g_test_lifecycleenvironment_defined
-
-- name: "Promote {{ deploymentcontentview }} ContentView to prod"
-  theforeman.foreman.content_view_version:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    content_view: "{{ deploymentcontentview }}"
-    current_lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
-    lifecycle_environments: "{{ g_prod_lifecycleenvironment }}"
-    organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - update-prod
-  when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined
-
-- name: "Define Activation Key for test"
-  theforeman.foreman.activation_key:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_test_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
-    subscriptions: "{{ subscriptions | default(omit) }}"
-    content_overrides: "{{ contentoverrides | default(omit) }}"
-    auto_attach: True
-    organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - change
-  when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined
-
-- name: "Define infrastructure-wide hostgroups"
-  theforeman.foreman.hostgroup:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ item['name'] }}"
-    organization: "{{ item['satellite_organization'] }}"
-    organizations:
-    - "{{ item['satellite_organization'] }}"
-    domain: "{{ item['domain'] }}"
-    architecture: "{{ item['architecture'] }}"
-    ptable: "{{ item['partition_table'] }}"
-    operatingsystem: "{{ item['operatingsystem'] }}"
-    medium: "{{ item['provision_installation_media'] | default(omit) }}"
-    content_source: "{{ item['foreman_capsule'] }}"
-    pxe_loader: "{{ item['pxe_loader'] | default(omit) }}"
-    locations: "{{ item['locations'] | default(locations.keys()) | list }}"
-    parameters:
-    - name: "c2c_puppet_disable_revocation"
-      value: "{{ item['c2c_puppet_disable_revocation'] }}"
-      parameter_type: "boolean"
-    - name: "c2c_puppet_shared_key"
-      value: "{{ item['c2c_puppet_shared_key'] }}"
-    - name: "puppetca_port"
-      value: "{{ item['puppetca_port'] }}"
-    - name: "puppet_ca_server"
-      value: "{{ item['puppet_ca_server'] }}"
-    - name: "puppetmaster"
-      value: "{{ item['puppetmaster'] }}"
-    - name: "puppetmaster_port"
-      value: "{{ item['puppetmaster_port'] }}"
-    - name: "c2c_puppet_env"
-      value: "{{ item['puppet_environment'] }}"
-    - name: "package_base_url"
-      value: "{{ item['package_base_url'] }}"
-    - name: "rhsm_url"
-      value: "{{ item['rhsm_url'] }}"
-    - name: "use_ntp"
-      value: "{{ item['use_ntp'] }}"
-      parameter_type: "boolean"
-    - name: "redhat_install_agent"
-      value: "{{ item['redhat_install_agent'] }}"
-      parameter_type: "boolean"
-    - name: "redhat_install_host_tools"
-      value: "{{ item['redhat_install_host_tools'] }}"
-      parameter_type: "boolean"
-    - name: "redhat_install_host_tracer_tools"
-      value: "{{ item['redhat_install_host_tracer_tools'] }}"
-      parameter_type: "boolean"
-    - name: "host_registration_insights"
-      value: "{{ item['host_registration_insights'] }}"
-      parameter_type: "boolean"
-  tags:
-  - never
-  - define-infra
-  with_items: "{{ infra_hostgroups | default([]) }}"
-
-- name: "Define hostgroup for test"
-  theforeman.foreman.hostgroup:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ g_test_hostgroup }}"
-    organization: "{{ satellite_organization }}"
-    organizations:
-    - "{{ satellite_organization }}"
-    domain: "{{ hostvars[groups['test'][0]]['domain'] if g_test_domain_is_groupvar else test_domain | default(omit) }}"
-    architecture: "{{ hostvars[groups['test'][0]]['architecture'] if g_test_architecture_is_groupvar else test_architecture | default(omit) }}"
-    ptable: "{{ hostvars[groups['test'][0]]['partition_table'] if g_test_partition_table_is_groupvar else test_partition_table | default(omit) }}"
-    operatingsystem: "{{ hostvars[groups['test'][0]]['operatingsystem'] if g_test_operatingsystem_is_groupvar else test_operatingsystem | default(omit) }}"
-    medium: "{{ hostvars[groups['test'][0]]['provision_installation_media'] if g_test_medium_is_groupvar else test_provision_installation_media | default(omit) }}"
-    content_source: "{{ hostvars[groups['test'][0]]['foreman_capsule'] if g_test_foreman_capsule_is_groupvar else test_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
-    parent: "{{ hostvars[groups['test'][0]]['hostgroup_parent'] if g_test_hostgroup_parent_is_groupvar else test_hostgroup_parent | default(omit) }}"
-    pxe_loader: "{{ hostvars[groups['test'][0]]['pxe_loader'] if g_test_pxe_loader_is_groupvar else test_pxe_loader | default(omit) }}"
-    locations: "{{ locations.keys() | list }}"
-    parameters:
-    - name: "kt_activation_keys"
-      value: "{{ g_test_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-  tags:
-  - never
-  - define
-  - change
-  when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined and g_test_hostgroup_defined
-
-- name: "Define Activation Key for production"
-  theforeman.foreman.activation_key:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_prod_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ g_prod_lifecycleenvironment }}"
-    subscriptions: "{{ subscriptions | default(omit) }}"
-    content_overrides: "{{ contentoverrides | default(omit) }}"
-    auto_attach: True
-    organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - change
-  when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined
-
-- name: "Define hostgroup for production"
-  theforeman.foreman.hostgroup:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ g_prod_hostgroup }}"
-    organization: "{{ satellite_organization }}"
-    organizations:
-    - "{{ satellite_organization }}"
-    domain: "{{ hostvars[groups['prod'][0]]['domain'] if g_prod_domain_is_groupvar else prod_domain | default(omit) }}"
-    architecture: "{{ hostvars[groups['prod'][0]]['architecture'] if g_prod_architecture_is_groupvar else prod_architecture | default(omit) }}"
-    ptable: "{{ hostvars[groups['prod'][0]]['partition_table'] if g_prod_partition_table_is_groupvar else prod_partition_table | default(omit) }}"
-    operatingsystem: "{{ hostvars[groups['prod'][0]]['operatingsystem'] if g_prod_operatingsystem_is_groupvar else prod_operatingsystem | default(omit) }}"
-    medium: "{{ hostvars[groups['prod'][0]]['provision_installation_media'] if g_prod_medium_is_groupvar else prod_provision_installation_media | default(omit) }}"
-    content_source: "{{ hostvars[groups['prod'][0]]['foreman_capsule'] if g_prod_foreman_capsule_is_groupvar else prod_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ g_prod_lifecycleenvironment }}"
-    parent: "{{ hostvars[groups['prod'][0]]['hostgroup_parent'] if g_prod_hostgroup_parent_is_groupvar else prod_hostgroup_parent | default(omit) }}"
-    pxe_loader: "{{ hostvars[groups['prod'][0]]['pxe_loader'] if g_prod_pxe_loader_is_groupvar else prod_pxe_loader | default(omit) }}"
-    locations: "{{ locations.keys() | list }}"
-    parameters:
-    - name: "kt_activation_keys"
-      value: "{{ g_prod_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-  tags:
-  - never
-  - define
-  - change
-  when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined and g_prod_hostgroup_defined
-
-# Can create the machine in Foreman here using the activation key and Org in subscription-manager
-# Can update the machine using ansible with yum module
-# - test the updates on the testing environment
-# - promote the ContentView to dinfo-prod and update the prod machines
-
-- name: "Deprovision hostgroup for production"
-  theforeman.foreman.hostgroup:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ g_prod_hostgroup }}"
-    organization: "{{ satellite_organization }}"
-    organizations:
-    - "{{ satellite_organization }}"
-    domain: "{{ hostvars[groups['prod'][0]]['domain'] if g_prod_domain_is_groupvar else prod_domain | default(omit) }}"
-    architecture: "{{ hostvars[groups['prod'][0]]['architecture'] if g_prod_architecture_is_groupvar else prod_architecture | default(omit) }}"
-    ptable: "{{ hostvars[groups['prod'][0]]['partition_table'] if g_prod_partition_table_is_groupvar else prod_partition_table | default(omit) }}"
-    operatingsystem: "{{ hostvars[groups['prod'][0]]['operatingsystem'] if g_prod_operatingsystem_is_groupvar else prod_operatingsystem | default(omit) }}"
-    medium: "{{ hostvars[groups['prod'][0]]['provision_installation_media'] if g_prod_medium_is_groupvar else prod_provision_installation_media | default(omit) }}"
-    content_source: "{{ hostvars[groups['prod'][0]]['foreman_capsule'] if g_prod_foreman_capsule_is_groupvar else prod_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ g_prod_lifecycleenvironment }}"
-    parent: "{{ hostvars[groups['prod'][0]]['hostgroup_parent'] if g_prod_hostgroup_parent_is_groupvar else prod_hostgroup_parent | default(omit) }}"
-    pxe_loader: "{{ hostvars[groups['prod'][0]]['pxe_loader'] if g_prod_pxe_loader_is_groupvar else prod_pxe_loader | default(omit) }}"
-    locations: "{{ locations.keys() | list }}"
-    parameters:
-    - name: "kt_activation_keys"
-      value: "{{ g_prod_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-    state: absent
+- include_tasks:
+    file: internals/lifecycleenvironment-deprovision.yml
+    apply:
+      tags:
+        - never
+        - deprovision
   tags:
   - never
   - deprovision
-  when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined and g_prod_activationkey_defined
-  ignore_errors: yes
 
-- name: "Deprovision Activation Key for production"
-  theforeman.foreman.activation_key:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_prod_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ g_prod_lifecycleenvironment }}"
-    subscriptions: "{{ subscriptions | default(omit) }}"
-    content_overrides: "{{ contentoverrides | default(omit) }}"
-    auto_attach: True
-    organization: "{{ satellite_organization }}"
-    state: absent
-  ignore_errors: yes
+- include_tasks:
+    file: internals/compositecontentviews-deprovision.yml
+    apply:
+      tags:
+        - never
+        - deprovision
+  tags:
+    - never
+    - deprovision
+
+- include_tasks:
+    file: internals/contentviews-deprovision.yml
+    apply:
+      tags:
+        - never
+        - deprovision
   tags:
   - never
   - deprovision
-  when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined
 
-- name: "Deprovision hostgroup for test"
-  theforeman.foreman.hostgroup:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ g_test_hostgroup }}"
-    organization: "{{ satellite_organization }}"
-    organizations:
-    - "{{ satellite_organization }}"
-    domain: "{{ hostvars[groups['test'][0]]['domain'] if g_test_domain_is_groupvar else test_domain | default(omit) }}"
-    architecture: "{{ hostvars[groups['test'][0]]['architecture'] if g_test_architecture_is_groupvar else test_architecture | default(omit) }}"
-    ptable: "{{ hostvars[groups['test'][0]]['partition_table'] if g_test_partition_table_is_groupvar else test_partition_table | default(omit) }}"
-    operatingsystem: "{{ hostvars[groups['test'][0]]['operatingsystem'] if g_test_operatingsystem_is_groupvar else test_operatingsystem | default(omit) }}"
-    medium: "{{ hostvars[groups['test'][0]]['provision_installation_media'] if g_test_medium_is_groupvar else test_provision_installation_media | default(omit) }}"
-    content_source: "{{ hostvars[groups['test'][0]]['foreman_capsule'] if g_test_foreman_capsule_is_groupvar else test_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
-    parent: "{{ hostvars[groups['test'][0]]['hostgroup_parent'] if g_test_hostgroup_parent_is_groupvar else test_hostgroup_parent | default(omit) }}"
-    pxe_loader: "{{ hostvars[groups['test'][0]]['pxe_loader'] if g_test_pxe_loader_is_groupvar else test_pxe_loader | default(omit) }}"
-    locations: "{{ locations.keys() | list }}"
-    parameters:
-    - name: "kt_activation_keys"
-      value: "{{ g_test_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-    state: absent
+- include_tasks:
+    file: internals/products-deprovision.yml
+    apply:
+      tags:
+        - never
+        - deprovision
   tags:
-  - never
-  - deprovision
-  when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined and g_test_hostgroup_defined
-  ignore_errors: yes
-
-
-- name: "Delete Activation Key for test"
-  theforeman.foreman.activation_key:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_test_activationkey }}"
-    content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
-    subscriptions: "{{ subscriptions | default(omit) }}"
-    content_overrides: "{{ contentoverrides | default(omit) }}"
-    auto_attach: True
-    organization: "{{ satellite_organization }}"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined
-
-- name: 'Delete Lifecycle Environment for prod'
-  theforeman.foreman.lifecycle_environment:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_prod_lifecycleenvironment }}"
-    organization: "{{ satellite_organization }}"
-    state: "absent"
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined
-
-- name: 'Delete Lifecycle Environment for test'
-  theforeman.foreman.lifecycle_environment:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_test_lifecycleenvironment }}"
-    organization: "{{ satellite_organization }}"
-    state: "absent"
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  when: g_test_lifecycleenvironment_defined
-
-- name: "Delete CompositeContentViews"
-  theforeman.foreman.content_view:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    composite: true
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-    components: "{{ item.components }}"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  with_items: "{{ compositecontentviews | default([]) }}"
-
-- name: "Delete ContentViews"
-  theforeman.foreman.content_view:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  with_items: "{{ contentviews | default([]) }}"
-
-- name: 'Delete custom Docker Repositories'
-  theforeman.foreman.repository:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    product: "{{ item.0.product }}"
-    name: "{{ item.1.name }}"
-    url: "{{ item.1.url | default('https://registry-1.docker.io/') }}"
-    docker_upstream_name: "{{ item.1.upstream_name }}"
-    mirror_on_sync: true
-    content_type: "docker"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  with_subelements:
-  - "{{ custom_repositories | default({}) }}"
-  - docker_repositories
-  - skip_missing: True
-
-- name: 'Delete custom RPM Repositories'
-  theforeman.foreman.repository:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    product: "{{ item.0.product }}"
-    name: "{{ item.1.name }}"
-    url: "{{ item.1.url | default('') }}"
-    download_policy: immediate
-    mirror_on_sync: true
-    content_type: "yum"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  with_subelements:
-  - "{{ custom_repositories | default({}) }}"
-  - yum_repositories
-  - skip_missing: True
-
-- name: 'Delete custom products'
-  theforeman.foreman.product:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.product }}"
-    organization: "{{ satellite_organization }}"
-    gpg_key: "{{ item.product }}"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  with_items: "{{ custom_repositories | default([]) }}"
-
-- name: 'Delete GPG keys for products'
-  theforeman.foreman.content_credential:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    organization: "{{ satellite_organization }}"
-    name: "{{ item.product }}"
-    content_type: gpg_key
-    content: "{{ item.gpgkey }}"
-    state: absent
-  ignore_errors: yes
-  tags:
-  - never
-  - deprovision
-  with_items: "{{ custom_repositories | default([]) }}"
+    - never
+    - deprovision

@@ -1,0 +1,10 @@
+- name: "Promote {{ deploymentcontentview }} ContentView to {{ target_lce_name }}"
+  theforeman.foreman.content_view_version:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    content_view: "{{ deploymentcontentview }}"
+    current_lifecycle_environment: "{{ source_lce_name }}"
+    lifecycle_environments: "{{ target_lce_name }}"
+    organization: "{{ satellite_organization }}"

@@ -1,0 +1,9 @@
+- name: "Publish of Composite ContentViews"
+  theforeman.foreman.content_view_version:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    content_view: "{{ item.name }}"
+    organization: "{{ satellite_organization }}"
+  with_items: "{{ compositecontentviews | default([]) }}"

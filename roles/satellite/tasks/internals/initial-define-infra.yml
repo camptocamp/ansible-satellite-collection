@@ -6,9 +6,6 @@
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ item }}"
   with_items: "{{ organizations | default([]) }}"
-  tags:
-  - never
-  - define-infra
 
 - name: Define domains
   theforeman.foreman.domain:
@@ -21,9 +18,6 @@
     locations: "{{ item.value.locations | default(locations.keys()) | list }}"
     description: "{{ item.value.description }}"
   with_dict: "{{ domains | default([]) }}"
-  tags:
-  - never
-  - define-infra
 
 - name: Define partition tables
   theforeman.foreman.partition_table:
@@ -38,35 +32,12 @@
     os_family: "{{ item.value.os_family }}"
     locked: false
   with_dict: "{{ partition_tables | default({}) }}"
-  tags:
-  - never
-  - define-infra
 
-- include: priv_define_provisining_templates.yml
+- include_tasks:
+    file: internals/snippets/define_provisining_templates.yml
   with_items: "{{ provisioning_templates | default([])}}"
   loop_control:
     loop_var: template_source
-  tags:
-  - never
-  - define-infra
-
-- name: Enable Red Hat Repositories
-  theforeman.foreman.repository_set:
-    username: "{{ satellite_user }}"
-    password: "{{ satellite_pwd }}"
-    server_url: "{{ satellite_url }}"
-    validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.name }}"
-    organization: "{{ satellite_organization }}"
-    product: "{{ item.product }}"
-    repositories: "{{ item.architectures | default(omit) }}"
-    all_repositories: "{{ 'false' if item.architectures is defined else 'true' }}"
-    state: enabled
-  tags:
-  - never
-  - define
-  - change
-  with_items: "{{ redhat_repositories | default([]) }}"
 
 - name: Define Installation Media
   theforeman.foreman.installation_medium:
@@ -81,9 +52,6 @@
     path: "{{ item.value.path }}"
     state: "{{ item.value.state  | default('present') }}"
   with_dict: "{{ installation_media | default({}) }}"
-  tags:
-  - never
-  - define-infra
 
 - name: "Create Operating Systems (provide default info)"
   theforeman.foreman.operatingsystem:
@@ -101,18 +69,13 @@
     major: "{{ item.major }}"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ operating_systems | default([]) }}"
-  tags:
-  - never
-  - define-infra
 
-- include: priv_define_os_template_association.yml
+- include_tasks:
+    file: internals/snippets/define_os_template_association.yml
   with_items:
   - "{{ operating_systems | default([]) }}"
   loop_control:
     loop_var: operating_system
-  tags:
-  - never
-  - define-infra
 
 - name: Define subnets
   theforeman.foreman.subnet:
@@ -133,6 +96,59 @@
     locations: "{{ item.value.locations | default(locations.keys()) | list }}"
     ipam: "{{ item.value.ipam | default(ipam) }}"
   with_dict: "{{ subnets | default({}) }}"
-  tags:
-  - never
-  - define-infra
+
+- name: "Define infrastructure-wide hostgroups"
+  theforeman.foreman.hostgroup:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+
+    name: "{{ item['name'] }}"
+    organization: "{{ item['satellite_organization'] }}"
+    organizations:
+    - "{{ item['satellite_organization'] }}"
+    domain: "{{ item['domain'] }}"
+    architecture: "{{ item['architecture'] }}"
+    ptable: "{{ item['partition_table'] }}"
+    operatingsystem: "{{ item['operatingsystem'] }}"
+    medium: "{{ item['provision_installation_media'] | default(omit) }}"
+    content_source: "{{ item['foreman_capsule'] }}"
+    pxe_loader: "{{ item['pxe_loader'] | default(omit) }}"
+    locations: "{{ item['locations'] | default(locations.keys()) | list }}"
+    parameters:
+    - name: "c2c_puppet_disable_revocation"
+      value: "{{ item['c2c_puppet_disable_revocation'] }}"
+      parameter_type: "boolean"
+    - name: "c2c_puppet_shared_key"
+      value: "{{ item['c2c_puppet_shared_key'] }}"
+    - name: "puppetca_port"
+      value: "{{ item['puppetca_port'] }}"
+    - name: "puppet_ca_server"
+      value: "{{ item['puppet_ca_server'] }}"
+    - name: "puppetmaster"
+      value: "{{ item['puppetmaster'] }}"
+    - name: "puppetmaster_port"
+      value: "{{ item['puppetmaster_port'] }}"
+    - name: "c2c_puppet_env"
+      value: "{{ item['puppet_environment'] }}"
+    - name: "package_base_url"
+      value: "{{ item['package_base_url'] }}"
+    - name: "rhsm_url"
+      value: "{{ item['rhsm_url'] }}"
+    - name: "use_ntp"
+      value: "{{ item['use_ntp'] }}"
+      parameter_type: "boolean"
+    - name: "redhat_install_agent"
+      value: "{{ item['redhat_install_agent'] }}"
+      parameter_type: "boolean"
+    - name: "redhat_install_host_tools"
+      value: "{{ item['redhat_install_host_tools'] }}"
+      parameter_type: "boolean"
+    - name: "redhat_install_host_tracer_tools"
+      value: "{{ item['redhat_install_host_tracer_tools'] }}"
+      parameter_type: "boolean"
+    - name: "host_registration_insights"
+      value: "{{ item['host_registration_insights'] }}"
+      parameter_type: "boolean"
+  with_items: "{{ infra_hostgroups | default([]) }}"
