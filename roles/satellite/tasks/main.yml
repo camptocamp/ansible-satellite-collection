@@ -136,7 +136,7 @@
 
 # promote contentview from test->prod
 - include_tasks:
-    file: internals/promote-contentview.yml
+    file: internals/contentview-promote.yml
     apply:
       tags:
         - define

@@ -1,0 +1,11 @@
+---
+- include_tasks:
+    file: internals/facts-gathering.yml
+
+# promote contentview from test->prod
+- include_tasks:
+    file: internals/contentview-promote.yml
+  vars:
+    target_lce_name: "{{ g_prod_lifecycleenvironment }}"
+    source_lce_name: "{{ g_test_lifecycleenvironment }}"
+  when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined

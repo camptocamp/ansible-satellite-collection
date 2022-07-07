@@ -1,0 +1,9 @@
+---
+- include_tasks:
+    file: internals/facts-gathering.yml
+
+- include_tasks:
+    file: internals/initial-define-infra.yml
+
+- include_tasks:
+    file: internals/redhat_repositories-enable.yml

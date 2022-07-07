@@ -1,0 +1,43 @@
+---
+- include_tasks:
+    file: internals/facts-gathering.yml
+
+- include_tasks:
+    file: internals/product-definition.yml
+
+- include_tasks:
+    file: internals/repository-sync.yml
+
+- include_tasks:
+    file: internals/contentview-definition.yml
+
+- include_tasks:
+    file: internals/contentview-publish.yml
+
+- include_tasks:
+    file: internals/compositecontentview-definition.yml
+
+- include_tasks:
+    file: internals/compositecontentview-publish.yml
+
+- include_tasks:
+    file: internals/lifecycleenvironment-definition.yml
+
+# promote contentview from Library->test
+- include_tasks:
+    file: internals/contentview-promote.yml
+  vars:
+    target_lce_name: "{{ g_test_lifecycleenvironment }}"
+    source_lce_name: Library
+  when: g_test_lifecycleenvironment_defined
+
+# promote contentview from test->prod
+- include_tasks:
+    file: internals/contentview-promote.yml
+  vars:
+    target_lce_name: "{{ g_prod_lifecycleenvironment }}"
+    source_lce_name: "{{ g_test_lifecycleenvironment }}"
+  when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined
+
+- include_tasks:
+    file: internals/activationkey-hostgroup-definition.yml

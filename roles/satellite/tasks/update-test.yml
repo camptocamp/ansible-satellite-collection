@@ -1,0 +1,17 @@
+---
+- include_tasks:
+    file: internals/facts-gathering.yml
+
+- include_tasks:
+    file: internals/contentview-publish.yml
+
+- include_tasks:
+    file: internals/compositecontentview-publish.yml
+
+# promote contentview from Library->test
+- include_tasks:
+    file: internals/contentview-promote.yml
+  vars:
+    target_lce_name: "{{ g_test_lifecycleenvironment }}"
+    source_lce_name: Library
+  when: g_test_lifecycleenvironment_defined
