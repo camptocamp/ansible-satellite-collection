@@ -18,6 +18,8 @@ There are only two ansible groups used `test` and `prod` this will translate to 
 
 The variables this role takes and their explanation are defined in `roles/satellite/vars/main.yml`.
 
+It is possible to use this role by including the main tasks and use tags or by including the different tasks individually to simplify the usage, the individual tasks have the same name as the tag.
+
 #### Usable Tags
 
 The role is all-in-one management of satellite. Actions to be performed by the role are defined using a tag in the role. To avoid mis-usages, if no tag is specified, no action is performed.
