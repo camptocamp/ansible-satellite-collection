@@ -75,6 +75,7 @@
         - never
   tags:
     - define
+    - publish
     - change
     - never
     - update-test
@@ -101,6 +102,7 @@
         - never
   tags:
     - define
+    - publish
     - change
     - never
     - update-test
