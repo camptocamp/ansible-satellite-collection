@@ -3,6 +3,9 @@
     file: internals/facts-gathering.yml
 
 - include_tasks:
+    file: internals/redhat_repositories-enable.yml
+
+- include_tasks:
     file: internals/product-definition.yml
 
 - include_tasks:

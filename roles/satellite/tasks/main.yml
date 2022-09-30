@@ -22,10 +22,12 @@
     apply:
       tags:
         - define-infra
+        - define
         - change
         - never
   tags:
     - define-infra
+    - define
     - change
     - never
 
