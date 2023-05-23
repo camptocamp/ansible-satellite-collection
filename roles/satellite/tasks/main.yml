@@ -138,6 +138,20 @@
     - update-test
     - never
 
+# Make sure the capsule is synchronized when variable is set
+- include_tasks:
+    file: internals/wait-for-capsule-sync.yml
+    apply:
+      tags:
+        - define
+        - update-test
+        - never
+  when: wait_capsule_sync
+  tags:
+    - define
+    - update-test
+    - never
+
 # promote contentview from test->prod
 - include_tasks:
     file: internals/contentview-promote.yml
@@ -165,6 +179,20 @@
   tags:
     - define
     - change
+    - never
+
+# Make sure the capsule is synchronized when variable is set
+- include_tasks:
+    file: internals/wait-for-capsule-sync.yml
+    apply:
+      tags:
+        - define
+        - update-prod
+        - never
+  when: wait_capsule_sync
+  tags:
+    - define
+    - update-prod
     - never
 
 ## All provisionning tasks are finished, will start defining the decommissioning tasks
