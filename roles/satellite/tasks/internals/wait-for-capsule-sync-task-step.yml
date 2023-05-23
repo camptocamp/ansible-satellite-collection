@@ -1,0 +1,16 @@
+- name: "Checking the state of {{ item.id }} in call number {{ counter }}"
+  theforeman.foreman.resource_info:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    search: "id = {{ item.id }}"
+    resource: foreman_tasks
+  register: current_task
+  when: not finished
+
+- name: "Updating the state tracking of {{ item.id }}"
+  ansible.builtin.set_fact:
+    finished: '{{ current_task.resources[0].state == "stopped" }}'
+  when: not finished
+

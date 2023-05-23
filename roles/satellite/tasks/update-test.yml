@@ -15,3 +15,7 @@
     target_lce_name: "{{ g_test_lifecycleenvironment }}"
     source_lce_name: Library
   when: g_test_lifecycleenvironment_defined
+
+- include_tasks:
+    file: internals/wait-for-capsule-sync.yml
+  when: wait_capsule_sync

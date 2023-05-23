@@ -1,0 +1,13 @@
+- name: "Search for running capsule sync tasks"
+  theforeman.foreman.resource_info:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    search: label = Actions::Katello::CapsuleContent::Sync and state = running
+    resource: foreman_tasks
+  register: running_capsule_sync
+
+- name: "Check if the capsule sync has finished"
+  include_tasks: wait-for-capsule-sync-task.yml
+  with_items: "{{ running_capsule_sync.resources }}"
