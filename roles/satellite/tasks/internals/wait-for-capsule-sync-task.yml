@@ -8,7 +8,7 @@
 
 - name: "Checking the state of the capsule sync for {{ item.id }}"
   include_tasks: wait-for-capsule-sync-task-step.yml
-  with_sequence: count=10
+  with_sequence: count=120
   tags:
   - never
   - update-test

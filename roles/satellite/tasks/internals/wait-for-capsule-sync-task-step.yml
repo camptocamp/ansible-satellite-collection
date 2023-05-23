@@ -1,3 +1,7 @@
+- name: "Waiting 30 seconds before checking the capsule sync state"
+  ansible.builtin.pause:
+    seconds: 30
+
 - name: "Checking the state of {{ item.id }} in call number {{ counter }}"
   theforeman.foreman.resource_info:
     username: "{{ satellite_user }}"
