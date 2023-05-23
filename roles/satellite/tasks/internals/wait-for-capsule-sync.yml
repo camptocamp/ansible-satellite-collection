@@ -7,7 +7,15 @@
     search: label = Actions::Katello::CapsuleContent::Sync and state = running
     resource: foreman_tasks
   register: running_capsule_sync
+  tags:
+  - never
+  - update-test
+  - update-prod
 
 - name: "Check if the capsule sync has finished"
   include_tasks: wait-for-capsule-sync-task.yml
+  tags:
+  - never
+  - update-test
+  - update-prod
   with_items: "{{ running_capsule_sync.resources }}"

@@ -1,10 +1,18 @@
 - name: "Initializing the control variable to track status of {{ item.id }}"
   ansible.builtin.set_fact:
     finished: false
+  tags:
+  - never
+  - update-test
+  - update-prod
 
 - name: "Checking the state of the capsule sync for {{ item.id }}"
   include_tasks: wait-for-capsule-sync-task-step.yml
   with_sequence: count=10
+  tags:
+  - never
+  - update-test
+  - update-prod
   when: not finished
   loop_control:
     loop_var: counter
