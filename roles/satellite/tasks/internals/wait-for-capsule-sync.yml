@@ -12,10 +12,32 @@
   - update-test
   - update-prod
 
-- name: "Check if the capsule sync has finished"
-  include_tasks: wait-for-capsule-sync-task.yml
+- name: "Wait in async mode for the capsule sync tasks to finish"
+  theforeman.foreman.wait_for_task:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    task: "{{ capsule_sync_task_id }}"
+  async: 9999999
+  poll: 0
+  register: g_capsule_sync_sleeper
+  loop: "{{ running_capsule_sync.resources | map(attribute='id') | list }}"
+  loop_control:
+    loop_var: capsule_sync_task_id
   tags:
   - never
   - update-test
   - update-prod
-  with_items: "{{ running_capsule_sync.resources }}"
+
+- name: "Check if the capsule sync tasks have finished"
+  async_status:
+    jid: "{{ g_capsule_sync_sleeper_item.ansible_job_id }}"
+  loop: "{{ g_capsule_sync_sleeper.results }}"
+  loop_control:
+    loop_var: g_capsule_sync_sleeper_item
+  when: g_capsule_sync_sleeper_item.ansible_job_id is defined # skip items that were skipped in the previous task
+  register: async_job_result
+  until: async_job_result.finished
+  retries: 9999
+  delay: 10
