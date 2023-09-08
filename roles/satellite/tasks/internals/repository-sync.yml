@@ -1,10 +1,6 @@
 - name: 'Init Repository list'
   set_fact:
     repository_list_to_sync: []
-  tags:
-  - never
-  - sync
-  - define
 
 - name: Collect Repositories used in ContentViews
   set_fact:

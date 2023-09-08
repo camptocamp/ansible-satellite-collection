@@ -11,10 +11,6 @@
     content_overrides: "{{ contentoverrides | default(omit) }}"
     auto_attach: True
     organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - change
   when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined
 
 - name: "Define hostgroup for test"
@@ -42,10 +38,6 @@
     - name: "kt_activation_keys"
       value: "{{ g_test_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-  tags:
-  - never
-  - define
-  - change
   when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined and g_test_hostgroup_defined
 
 - name: "Define Activation Key for production"
@@ -61,10 +53,6 @@
     content_overrides: "{{ contentoverrides | default(omit) }}"
     auto_attach: True
     organization: "{{ satellite_organization }}"
-  tags:
-  - never
-  - define
-  - change
   when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined
 
 - name: "Define hostgroup for production"
@@ -92,8 +80,4 @@
     - name: "kt_activation_keys"
       value: "{{ g_prod_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-  tags:
-  - never
-  - define
-  - change
   when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined and g_prod_hostgroup_defined

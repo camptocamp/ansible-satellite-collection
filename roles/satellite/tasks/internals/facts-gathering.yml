@@ -78,5 +78,3 @@
   - set_fact:
       g_prod_hostgroup: "{{ hostvars[groups['prod'][0]]['hostgroup'] if g_prod_hostgroup_is_groupvar else prod_hostgroup }}"
     when: g_prod_hostgroup_defined
-  tags:
-    - always

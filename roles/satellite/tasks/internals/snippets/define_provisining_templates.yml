@@ -13,6 +13,3 @@
   with_fileglob: "{{ template_source.globpath }}"
   loop_control:
     loop_var: template
-  tags:
-  - never
-  - define-infra

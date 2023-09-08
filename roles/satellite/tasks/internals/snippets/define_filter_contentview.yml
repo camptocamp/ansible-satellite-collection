@@ -19,10 +19,6 @@
     inclusion: false
   with_items:
   - "{{ contentview_repo.1.blacklist_packages | default([]) }}"
-  tags:
-  - never
-  - define
-  - change
 
 - name: "Define Contentview Inclusive Filters for CV '{{ contentview_repo.0.name }}' repository '{{ contentview_repo.1.name }}'"
   theforeman.foreman.content_view_filter:
@@ -45,7 +41,3 @@
     inclusion: true
   with_items:
   - "{{ contentview_repo.1.whitelist_packages | default([]) }}"
-  tags:
-  - never
-  - define
-  - change
