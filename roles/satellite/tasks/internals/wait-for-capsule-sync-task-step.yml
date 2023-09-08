@@ -11,17 +11,9 @@
     search: "id = {{ item.id }}"
     resource: foreman_tasks
   register: current_task
-  tags:
-  - never
-  - update-test
-  - update-prod
   when: not finished
 
 - name: "Updating the state tracking of {{ item.id }}"
   ansible.builtin.set_fact:
     finished: '{{ current_task.resources[0].state == "stopped" }}'
-  tags:
-  - never
-  - update-test
-  - update-prod
   when: not finished

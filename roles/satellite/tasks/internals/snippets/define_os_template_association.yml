@@ -11,6 +11,3 @@
     provisioning_template: "{{ item.template_name }}"
     state: present
   with_items: "{{ operating_system.template_associations | default([]) }}"
-  tags:
-  - never
-  - define-infra

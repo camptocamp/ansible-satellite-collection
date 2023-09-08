@@ -7,10 +7,6 @@
     search: label = Actions::Katello::CapsuleContent::Sync and state = running
     resource: foreman_tasks
   register: running_capsule_sync
-  tags:
-  - never
-  - update-test
-  - update-prod
 
 - name: "Wait in async mode for the capsule sync tasks to finish"
   theforeman.foreman.wait_for_task:
@@ -25,10 +21,6 @@
   loop: "{{ running_capsule_sync.resources | map(attribute='id') | list }}"
   loop_control:
     loop_var: capsule_sync_task_id
-  tags:
-  - never
-  - update-test
-  - update-prod
 
 - name: "Check if the capsule sync tasks have finished"
   async_status:
