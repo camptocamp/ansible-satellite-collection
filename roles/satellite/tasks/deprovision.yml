@@ -1,0 +1,18 @@
+---
+- include_tasks:
+    file: internals/facts-gathering.yml
+
+- include_tasks:
+    file: internals/activationkey-hostgroups-deprovision.yml
+
+- include_tasks:
+    file: internals/lifecycleenvironment-deprovision.yml
+
+- include_tasks:
+    file: internals/compositecontentview-deprovision.yml
+
+- include_tasks:
+    file: internals/contentview-deprovision.yml
+
+- include_tasks:
+    file: internals/products-deprovision.yml
