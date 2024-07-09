@@ -60,6 +60,7 @@
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ item.name }}"
+    description: "{{ item.description }}"
     family: "{{ item.family }}"
     architectures: "{{ item.architectures }}"
     media: "{{ item.media | default(omit) }}"
