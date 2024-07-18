@@ -1,8 +1,5 @@
 ---
 - include_tasks:
-    file: internals/facts-gathering.yml
-
-- include_tasks:
     file: internals/activationkey-hostgroups-deprovision.yml
 
 - include_tasks:
