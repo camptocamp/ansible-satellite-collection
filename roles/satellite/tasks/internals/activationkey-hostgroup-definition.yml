@@ -4,14 +4,17 @@
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_test_activationkey }}"
+    name: "{{ test_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
+    lifecycle_environment: "{{ test_lifecycleenvironment }}"
     subscriptions: "{{ subscriptions | default(omit) }}"
     content_overrides: "{{ contentoverrides | default(omit) }}"
     auto_attach: True
     organization: "{{ satellite_organization }}"
-  when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined
+  when:
+    - test_lifecycleenvironment is defined
+    - deploymentcontentview is defined
+    - test_activationkey is defined
 
 - name: "Define hostgroup for test"
   theforeman.foreman.hostgroup:
@@ -19,26 +22,29 @@
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ g_test_hostgroup }}"
+    name: "{{ test_hostgroup }}"
     organization: "{{ satellite_organization }}"
     organizations:
     - "{{ satellite_organization }}"
-    domain: "{{ hostvars[groups['test'][0]]['domain'] if g_test_domain_is_groupvar else test_domain | default(omit) }}"
-    architecture: "{{ hostvars[groups['test'][0]]['architecture'] if g_test_architecture_is_groupvar else test_architecture | default(omit) }}"
-    ptable: "{{ hostvars[groups['test'][0]]['partition_table'] if g_test_partition_table_is_groupvar else test_partition_table | default(omit) }}"
-    operatingsystem: "{{ hostvars[groups['test'][0]]['operatingsystem'] if g_test_operatingsystem_is_groupvar else test_operatingsystem | default(omit) }}"
-    medium: "{{ hostvars[groups['test'][0]]['provision_installation_media'] if g_test_medium_is_groupvar else test_provision_installation_media | default(omit) }}"
-    content_source: "{{ hostvars[groups['test'][0]]['foreman_capsule'] if g_test_foreman_capsule_is_groupvar else test_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ g_test_lifecycleenvironment }}"
-    parent: "{{ hostvars[groups['test'][0]]['hostgroup_parent'] if g_test_hostgroup_parent_is_groupvar else test_hostgroup_parent | default(omit) }}"
-    pxe_loader: "{{ hostvars[groups['test'][0]]['pxe_loader'] if g_test_pxe_loader_is_groupvar else test_pxe_loader | default(omit) }}"
+    domain: "{{ test_domain | default(omit) }}"
+    architecture: "{{ test_architecture | default(omit) }}"
+    ptable: "{{ test_partition_table | default(omit) }}"
+    operatingsystem: "{{ test_operatingsystem | default(omit) }}"
+    medium: "{{ test_provision_installation_media | default(omit) }}"
+    content_source: "{{ test_foreman_capsule | default(omit) }}"
+    lifecycle_environment: "{{ test_lifecycleenvironment }}"
+    parent: "{{ test_hostgroup_parent | default(omit) }}"
+    pxe_loader: "{{ test_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
     parameters:
     - name: "kt_activation_keys"
-      value: "{{ g_test_activationkey }}"
+      value: "{{ test_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-  when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined and g_test_hostgroup_defined
+  when:
+    - test_lifecycleenvironment is defined
+    - deploymentcontentview is defined
+    - test_activationkey is defined
+    - test_hostgroup is defined
 
 - name: "Define Activation Key for production"
   theforeman.foreman.activation_key:
@@ -46,14 +52,17 @@
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ g_prod_activationkey }}"
+    name: "{{ prod_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ g_prod_lifecycleenvironment }}"
+    lifecycle_environment: "{{ prod_lifecycleenvironment }}"
     subscriptions: "{{ subscriptions | default(omit) }}"
     content_overrides: "{{ contentoverrides | default(omit) }}"
     auto_attach: True
     organization: "{{ satellite_organization }}"
-  when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined
+  when:
+    - prod_lifecycleenvironment is defined
+    - deploymentcontentview is defined and
+    - prod_activationkey is defined
 
 - name: "Define hostgroup for production"
   theforeman.foreman.hostgroup:
@@ -61,23 +70,26 @@
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
-
-    name: "{{ g_prod_hostgroup }}"
+    name: "{{ prod_hostgroup }}"
     organization: "{{ satellite_organization }}"
     organizations:
     - "{{ satellite_organization }}"
-    domain: "{{ hostvars[groups['prod'][0]]['domain'] if g_prod_domain_is_groupvar else prod_domain | default(omit) }}"
-    architecture: "{{ hostvars[groups['prod'][0]]['architecture'] if g_prod_architecture_is_groupvar else prod_architecture | default(omit) }}"
-    ptable: "{{ hostvars[groups['prod'][0]]['partition_table'] if g_prod_partition_table_is_groupvar else prod_partition_table | default(omit) }}"
-    operatingsystem: "{{ hostvars[groups['prod'][0]]['operatingsystem'] if g_prod_operatingsystem_is_groupvar else prod_operatingsystem | default(omit) }}"
-    medium: "{{ hostvars[groups['prod'][0]]['provision_installation_media'] if g_prod_medium_is_groupvar else prod_provision_installation_media | default(omit) }}"
-    content_source: "{{ hostvars[groups['prod'][0]]['foreman_capsule'] if g_prod_foreman_capsule_is_groupvar else prod_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ g_prod_lifecycleenvironment }}"
-    parent: "{{ hostvars[groups['prod'][0]]['hostgroup_parent'] if g_prod_hostgroup_parent_is_groupvar else prod_hostgroup_parent | default(omit) }}"
-    pxe_loader: "{{ hostvars[groups['prod'][0]]['pxe_loader'] if g_prod_pxe_loader_is_groupvar else prod_pxe_loader | default(omit) }}"
+    domain: "{{ prod_domain | default(omit) }}"
+    architecture: "{{ prod_architecture | default(omit) }}"
+    ptable: "{{ prod_partition_table | default(omit) }}"
+    operatingsystem: "{{ prod_operatingsystem | default(omit) }}"
+    medium: "{{ prod_provision_installation_media | default(omit) }}"
+    content_source: "{{ prod_foreman_capsule | default(omit) }}"
+    lifecycle_environment: "{{ prod_lifecycleenvironment }}"
+    parent: "{{ prod_hostgroup_parent | default(omit) }}"
+    pxe_loader: "{{ prod_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
     parameters:
     - name: "kt_activation_keys"
-      value: "{{ g_prod_activationkey }}"
+      value: "{{ prod_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-  when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined and g_prod_hostgroup_defined
+  when:
+    - prod_lifecycleenvironment is defined
+    - deploymentcontentview is defined
+    - prod_activationkey is defined
+    - prod_hostgroup is defined
