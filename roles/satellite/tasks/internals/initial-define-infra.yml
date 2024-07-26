@@ -19,6 +19,55 @@
     description: "{{ item.value.description }}"
   with_dict: "{{ domains | default([]) }}"
 
+- name: Setup Authentication Source
+  theforeman.foreman.auth_source_ldap:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: " {{ item.name }} "
+    host: "{{ item.host }}"
+    port: "{{ item.port }}"
+    tls: "{{ item.tls }}"
+    organizations: "{{ item.value.organizations | default(organizations) }}"
+    locations: "{{ item.value.locations | default(locations.keys()) }}"
+    server_type: "{{ item.server_type }}"
+    usergroup_sync: "{{ item.usergroup_sync }}"
+    account: "{{ item.account }}"
+    account_password: "{{ ad_auth_pwd }}"
+    base_dn: "{{ item.base_dn }}"
+    groups_base: "{{ item.groups_base }}"
+    ldap_filter: "{{ item.ldap_filter }}"
+    attr_login: "{{ item.attr_login }}"
+    attr_firstname: "{{ item.attr_firstname }}"
+    attr_lastname: "{{ item.attr_lastname }}"
+    attr_mail: "{{ item.attr_mail }}"
+    onthefly_register: "{{ item.onthefly_register }}"
+    state: "{{ item.state }}"
+  with_items: "{{ ad_auth | default([]) }}"
+
+- name: Define User Group admin
+  theforeman.foreman.usergroup:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ item.name }}"
+    admin: "{{ item.admin }}"
+  with_items: "{{ usergroup | default([]) }}"
+
+- name: Define external user group
+  theforeman.foreman.external_usergroup:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ item.external_usergroup_name }}"
+    auth_source: "{{ item.auth_source }}"
+    usergroup: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ usergroup | default([]) }}"
+
 - name: Define partition tables
   theforeman.foreman.partition_table:
     name: "{{ item.key }}"
