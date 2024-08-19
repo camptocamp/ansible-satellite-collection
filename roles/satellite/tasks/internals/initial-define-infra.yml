@@ -34,7 +34,7 @@
     server_type: "{{ item.server_type }}"
     usergroup_sync: "{{ item.usergroup_sync }}"
     account: "{{ item.account }}"
-    account_password: "{{ ad_auth_pwd }}"
+    account_password: "{{ ldap_auth_pwd }}"
     base_dn: "{{ item.base_dn }}"
     groups_base: "{{ item.groups_base }}"
     ldap_filter: "{{ item.ldap_filter }}"
@@ -44,7 +44,7 @@
     attr_mail: "{{ item.attr_mail }}"
     onthefly_register: "{{ item.onthefly_register }}"
     state: "{{ item.state }}"
-  with_items: "{{ ad_auth | default([]) }}"
+  with_items: "{{ ldap_auth | default([]) }}"
 
 - name: Define User Group admin
   theforeman.foreman.usergroup:
