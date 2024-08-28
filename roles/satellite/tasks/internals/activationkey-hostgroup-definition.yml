@@ -37,6 +37,8 @@
     parameters:
     - name: "kt_activation_keys"
       value: "{{ g_test_activationkey }}"
+    - name: "keyboard"
+      value: "{{ keyboard | default('us') }}"
     content_view: "{{ deploymentcontentview }}"
   when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined and g_test_hostgroup_defined
 
@@ -79,5 +81,7 @@
     parameters:
     - name: "kt_activation_keys"
       value: "{{ g_prod_activationkey }}"
+    - name: "keyboard"
+      value: "{{ keyboard | default('us') }}"
     content_view: "{{ deploymentcontentview }}"
   when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined and g_prod_hostgroup_defined
