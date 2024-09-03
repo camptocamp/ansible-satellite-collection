@@ -1,6 +1,3 @@
 ---
 - include_tasks:
-    file: internals/facts-gathering.yml
-
-- include_tasks:
     file: internals/contentview-publish.yml
