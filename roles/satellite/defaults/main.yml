@@ -1,2 +1,11 @@
 ---
 satellite_verify_ssl: true
+
+satellite_hostgroup_parameters_defaults:
+  - name: "kt_activation_keys"
+    value: "{{ g_test_activationkey }}"
+  - name: "keyboard"
+    value: "us"
+  - name: "remote_execution_ssh_keys"
+    parameter_type: "array"
+    value: []

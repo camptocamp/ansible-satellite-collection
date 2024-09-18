@@ -19,11 +19,7 @@
     parent: "{{ hostvars[groups['prod'][0]]['hostgroup_parent'] if g_prod_hostgroup_parent_is_groupvar else prod_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ hostvars[groups['prod'][0]]['pxe_loader'] if g_prod_pxe_loader_is_groupvar else prod_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
-    parameters:
-    - name: "kt_activation_keys"
-      value: "{{ g_prod_activationkey }}"
-    - name: "keyboard"
-      value: "{{ keyboard | default('us') }}"
+    parameters: "{{ [satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
     content_view: "{{ deploymentcontentview }}"
     state: absent
   when: g_prod_lifecycleenvironment_defined and g_prod_activationkey_defined and g_prod_activationkey_defined
@@ -67,11 +63,7 @@
     parent: "{{ hostvars[groups['test'][0]]['hostgroup_parent'] if g_test_hostgroup_parent_is_groupvar else test_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ hostvars[groups['test'][0]]['pxe_loader'] if g_test_pxe_loader_is_groupvar else test_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
-    parameters:
-    - name: "kt_activation_keys"
-      value: "{{ g_test_activationkey }}"
-    - name: "keyboard"
-      value: "{{ keyboard | default('us') }}"
+    parameters: "{{ [satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
     content_view: "{{ deploymentcontentview }}"
     state: absent
   when: g_test_lifecycleenvironment_defined and g_test_activationkey_defined and g_test_hostgroup_defined
