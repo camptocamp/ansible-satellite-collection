@@ -46,7 +46,6 @@
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ item.product }}"
     organization: "{{ satellite_organization }}"
-    gpg_key: "{{ item.product }}"
     state: absent
   ignore_errors: yes
   with_items: "{{ custom_repositories | default([]) }}"
@@ -62,5 +61,23 @@
     content_type: gpg_key
     content: "{{ item.gpgkey }}"
     state: absent
+  when: item.gpgkey is defined
   ignore_errors: yes
   with_items: "{{ custom_repositories | default([]) }}"
+
+- name: 'Delete GPG keys for Repositories'
+  theforeman.foreman.content_credential:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    name: "{{ item.1.name }}"
+    content_type: gpg_key
+    state: absent
+  when: item.1.gpgkey is defined
+  with_subelements:
+  - "{{ custom_repositories | default({}) }}"
+  - yum_repositories
+  - skip_missing: True
+  ignore_errors: yes
