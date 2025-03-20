@@ -13,7 +13,6 @@
     organization: "{{ satellite_organization }}"
   when:
     - test_lifecycleenvironment is defined
-    - deploymentcontentview is defined
     - test_activationkey is defined
 
 - name: "Define hostgroup for test"
@@ -36,7 +35,7 @@
     parent: "{{ test_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ test_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
-    parameters: "{{ [satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([]), test_hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
+    parameters: "{{ [ [ {'name' : 'kt_activation_keys', 'value': test_activationkey}], satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([]), test_hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
     content_view: "{{ deploymentcontentview }}"
   when:
     - test_lifecycleenvironment is defined
@@ -59,7 +58,6 @@
     organization: "{{ satellite_organization }}"
   when:
     - prod_lifecycleenvironment is defined
-    - deploymentcontentview is defined and
     - prod_activationkey is defined
 
 - name: "Define hostgroup for production"
@@ -82,7 +80,7 @@
     parent: "{{ prod_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ prod_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
-    parameters: "{{ [satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([]), prod_hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
+    parameters: "{{ [ [ {'name' : 'kt_activation_keys', 'value': prod_activationkey}], satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([]), prod_hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
     content_view: "{{ deploymentcontentview }}"
   when:
     - prod_lifecycleenvironment is defined

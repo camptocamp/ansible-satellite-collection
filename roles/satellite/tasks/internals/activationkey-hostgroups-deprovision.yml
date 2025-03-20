@@ -21,11 +21,7 @@
     parameters: "{{ [satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
     content_view: "{{ deploymentcontentview }}"
     state: absent
-  when:
-    - prod_lifecycleenvironment is defined
-    - deploymentcontentview is defined
-    - prod_activationkey is defined
-    - prod_hostgroup is defined
+  when: prod_hostgroup is defined
   ignore_errors: yes
 
 - name: "Deprovision Activation Key for production"
@@ -43,10 +39,7 @@
     organization: "{{ satellite_organization }}"
     state: absent
   ignore_errors: yes
-  when:
-    - prod_lifecycleenvironment is defined
-    - deploymentcontentview is defined
-    - prod_activationkey is defined
+  when: prod_activationkey is defined
 
 - name: "Deprovision hostgroup for test"
   theforeman.foreman.hostgroup:
@@ -71,11 +64,7 @@
     parameters: "{{ [satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
     content_view: "{{ deploymentcontentview }}"
     state: absent
-  when:
-    - test_lifecycleenvironment is defined
-    - deploymentcontentview is defined
-    - test_activationkey is defined
-    - test_hostgroup is defined
+  when: test_hostgroup is defined
   ignore_errors: yes
 
 - name: "Delete Activation Key for test"
@@ -93,7 +82,4 @@
     organization: "{{ satellite_organization }}"
     state: absent
   ignore_errors: yes
-  when:
-    - test_lifecycleenvironment is defined
-    - deploymentcontentview is defined
-    - test_activationkey is defined
+  when: test_activationkey is defined
