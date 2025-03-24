@@ -32,7 +32,7 @@
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ prod_activationkey }}"
     content_view: "{{ deploymentcontentview }}"
-    lifecycle_environment: "{{ prod_lifecycleenvironment }}"
+    lifecycle_environment: "{{ prod_lifecycleenvironment | default(omit) }}"
     subscriptions: "{{ subscriptions | default(omit) }}"
     content_overrides: "{{ contentoverrides | default(omit) }}"
     auto_attach: True
@@ -57,7 +57,7 @@
     operatingsystem: "{{ test_operatingsystem | default(omit) }}"
     medium: "{{ test_provision_installation_media | default(omit) }}"
     content_source: "{{ test_foreman_capsule | default(omit) }}"
-    lifecycle_environment: "{{ test_lifecycleenvironment }}"
+    lifecycle_environment: "{{ test_lifecycleenvironment | default(omit) }}"
     parent: "{{ test_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ test_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
