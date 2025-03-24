@@ -1,8 +1,5 @@
 ---
 - include_tasks:
-    file: internals/facts-gathering.yml
-
-- include_tasks:
     file: internals/redhat_repositories-enable.yml
 
 - include_tasks:
@@ -30,17 +27,22 @@
 - include_tasks:
     file: internals/contentview-promote.yml
   vars:
-    target_lce_name: "{{ g_test_lifecycleenvironment }}"
+    target_lce_name: "{{ test_lifecycleenvironment }}"
     source_lce_name: Library
-  when: g_test_lifecycleenvironment_defined
+  when:
+    - test_lifecycleenvironment is defined
+    - deploymentcontentview is defined
 
 # promote contentview from test->prod
 - include_tasks:
     file: internals/contentview-promote.yml
   vars:
-    target_lce_name: "{{ g_prod_lifecycleenvironment }}"
-    source_lce_name: "{{ g_test_lifecycleenvironment }}"
-  when: g_test_lifecycleenvironment_defined and g_prod_lifecycleenvironment_defined
+    target_lce_name: "{{ prod_lifecycleenvironment }}"
+    source_lce_name: "{{ test_lifecycleenvironment }}"
+  when:
+    - test_lifecycleenvironment is defined
+    - prod_lifecycleenvironment is defined
+    - deploymentcontentview is defined
 
 - include_tasks:
     file: internals/activationkey-hostgroup-definition.yml
