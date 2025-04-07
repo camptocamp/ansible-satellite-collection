@@ -35,7 +35,16 @@
     parent: "{{ test_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ test_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
-    parameters: "{{ [ [ {'name' : 'kt_activation_keys', 'value': test_activationkey}], satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([]), test_hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
+    parameters: >-
+      {{
+        (
+          [ {'name': 'kt_activation_keys', 'value': test_activationkey } ]
+          + satellite_hostgroup_parameters_defaults
+          + (hostgroup_parameters | default([]))
+          + (test_hostgroup_parameters | default([]))
+        )
+        | community.general.lists_mergeby('name')
+      }}
     content_view: "{{ deploymentcontentview }}"
   when:
     - test_lifecycleenvironment is defined
@@ -80,7 +89,17 @@
     parent: "{{ prod_hostgroup_parent | default(omit) }}"
     pxe_loader: "{{ prod_pxe_loader | default(omit) }}"
     locations: "{{ locations.keys() | list }}"
-    parameters: "{{ [ [ {'name' : 'kt_activation_keys', 'value': prod_activationkey}], satellite_hostgroup_parameters_defaults, hostgroup_parameters | default([]), prod_hostgroup_parameters | default([])] | community.general.lists_mergeby('name') }}"
+    parameters: >-
+      {{
+        (
+          [ {'name': 'kt_activation_keys', 'value': prod_activationkey } ]
+          + satellite_hostgroup_parameters_defaults
+          + (hostgroup_parameters | default([]))
+          + (prod_hostgroup_parameters | default([]))
+        )
+        | community.general.lists_mergeby('name')
+      }}
+
     content_view: "{{ deploymentcontentview }}"
   when:
     - prod_lifecycleenvironment is defined
