@@ -19,7 +19,7 @@
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ item.product }}"
     organization: "{{ satellite_organization }}"
-    gpg_key: "{{ omit if item.gpgkey is undefined else item.gpgkey }}"
+    gpg_key: "{{ omit if item.gpgkey is undefined else item.product }}"
     state: present
   with_items: "{{ custom_repositories | default([]) }}"
 
