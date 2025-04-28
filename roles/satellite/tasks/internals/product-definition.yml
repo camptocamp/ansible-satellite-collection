@@ -49,7 +49,7 @@
     product: "{{ item.0.product }}"
     name: "{{ item.1.name }}"
     url: "{{ item.1.url | default('') }}"
-    gpg_key: "{% if item.1.gpgkey is defined %}{{ item.1.name }}{% elif item.0.gpgkey is defined %}{{ item.0.name }}{% else %}omit{% endif %}"
+    gpg_key: "{% if item.1.gpgkey is defined %}{{ item.1.name }}{% elif item.0.gpgkey is defined %}{{ item.0.product }}{% else %}omit{% endif %}"
     download_policy: immediate
     mirror_on_sync: true
     content_type: "yum"
