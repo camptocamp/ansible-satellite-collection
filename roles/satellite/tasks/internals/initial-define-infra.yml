@@ -29,8 +29,8 @@
     host: "{{ item.host }}"
     port: "{{ item.port }}"
     tls: "{{ item.tls }}"
-    organizations: "{{ item.value.organizations | default(organizations) }}"
-    locations: "{{ item.value.locations | default(locations.keys()) }}"
+    organizations: "{{ item.organizations | default(organizations) }}"
+    locations: "{{ item.locations | default(locations.keys()) | list }}"
     server_type: "{{ item.server_type }}"
     usergroup_sync: "{{ item.usergroup_sync }}"
     account: "{{ item.account }}"
@@ -43,20 +43,37 @@
     attr_lastname: "{{ item.attr_lastname }}"
     attr_mail: "{{ item.attr_mail }}"
     onthefly_register: "{{ item.onthefly_register }}"
-    state: "{{ item.state }}"
+    state: "{{ item.state | default('present') }}"
+  ignore_errors: true
   with_items: "{{ ldap_auth | default([]) }}"
 
-- name: Define User Group admin
+- name: Define Roles for RBAC
+  theforeman.foreman.role:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    name: "{{ item.name }}"
+    filters: "{{ item.filters }}"
+    locations: "{{ item.locations | default(omit) }}"
+    organizations: "{{ item.organizations | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ roles | default([]) }}"
+
+- name: Define User Groups
   theforeman.foreman.usergroup:
     username: "{{ satellite_user }}"
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
     name: "{{ item.name }}"
+    roles: "{{ item.roles | default(omit) }}"
     admin: "{{ item.admin }}"
+    users: "{{ item.users | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
   with_items: "{{ usergroup | default([]) }}"
 
-- name: Define external user group
+- name: Define external user Groups
   theforeman.foreman.external_usergroup:
     username: "{{ satellite_user }}"
     password: "{{ satellite_pwd }}"
@@ -65,7 +82,9 @@
     name: "{{ item.external_usergroup_name }}"
     auth_source: "{{ item.auth_source }}"
     usergroup: "{{ item.name }}"
-    state: "{{ item.state }}"
+    state: "{{ item.state | default('present') }}"
+  when:
+    - item.external_usergroup_name is defined
   with_items: "{{ usergroup | default([]) }}"
 
 - name: Define partition tables
