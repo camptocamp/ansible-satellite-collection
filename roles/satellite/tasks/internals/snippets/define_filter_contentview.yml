@@ -4,7 +4,7 @@
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.title | default(item.name) }}"
+    name: "{{ contentview_repo.0.name }}-{{ contentview_repo.1.name }}-exclude"
     description: "{{ item.description | default(omit) }}"
     content_view: "{{ contentview_repo.0.name }}"
     organization: "{{ satellite_organization }}"
@@ -12,11 +12,23 @@
     repositories:
     - name: "{{ contentview_repo.1.name }}"
       product: "{{ contentview_repo.1.product }}"
+    inclusion: false
+  when:
+    - contentview_repo.1.blacklist_packages | default([]) | length>0
+
+- name: "Add package {{ item.name }} to Exclusive Filters for CV '{{ contentview_repo.0.name }}' repository '{{ contentview_repo.1.name }}'"
+  theforeman.foreman.content_view_filter_rule:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    content_view: "{{ contentview_repo.0.name }}"
+    content_view_filter: "{{ contentview_repo.0.name }}-{{ contentview_repo.1.name }}-exclude"
     package_name: "{{ item.name }}"
     version: "{{ item.version | default(omit) }}"
     min_version: "{{ item.min_version | default(omit) }}"
     max_version: "{{ item.max_version | default(omit) }}"
-    inclusion: false
   with_items:
   - "{{ contentview_repo.1.blacklist_packages | default([]) }}"
 
@@ -26,7 +38,7 @@
     password: "{{ satellite_pwd }}"
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
-    name: "{{ item.title | default(item.name) }}"
+    name: "{{ contentview_repo.0.name }}-{{ contentview_repo.1.name }}-include"
     description: "{{ item.description | default(omit) }}"
     content_view: "{{ contentview_repo.0.name }}"
     organization: "{{ satellite_organization }}"
@@ -34,10 +46,22 @@
     repositories:
     - name: "{{ contentview_repo.1.name }}"
       product: "{{ contentview_repo.1.product }}"
+    inclusion: true
+  when:
+    - contentview_repo.1.whitelist_packages | default([]) | length>0
+
+- name: "Add package {{ item.name }} to Inclusive Filters for CV '{{ contentview_repo.0.name }}' repository '{{ contentview_repo.1.name }}'"
+  theforeman.foreman.content_view_filter_rule:
+    username: "{{ satellite_user }}"
+    password: "{{ satellite_pwd }}"
+    server_url: "{{ satellite_url }}"
+    validate_certs: "{{ satellite_verify_ssl }}"
+    organization: "{{ satellite_organization }}"
+    content_view: "{{ contentview_repo.0.name }}"
+    content_view_filter: "{{ contentview_repo.0.name }}-{{ contentview_repo.1.name }}-include"
     package_name: "{{ item.name }}"
     version: "{{ item.version | default(omit) }}"
     min_version: "{{ item.min_version | default(omit) }}"
     max_version: "{{ item.max_version | default(omit) }}"
-    inclusion: true
   with_items:
   - "{{ contentview_repo.1.whitelist_packages | default([]) }}"
