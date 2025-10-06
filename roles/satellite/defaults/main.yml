@@ -1,9 +1,4 @@
 ---
 satellite_verify_ssl: true
 
-satellite_hostgroup_parameters_defaults:
-  - name: "keyboard"
-    value: "us"
-  - name: "remote_execution_ssh_keys"
-    parameter_type: "array"
-    value: []
+satellite_hostgroup_parameters_defaults: []
