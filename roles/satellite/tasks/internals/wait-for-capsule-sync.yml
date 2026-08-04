@@ -15,6 +15,7 @@
     server_url: "{{ satellite_url }}"
     validate_certs: "{{ satellite_verify_ssl }}"
     task: "{{ capsule_sync_task_id }}"
+    timeout: 9999999
   async: 9999999
   poll: 0
   register: g_capsule_sync_sleeper
