@@ -35,7 +35,6 @@
     lifecycle_environment: "{{ prod_lifecycleenvironment | default(omit) }}"
     subscriptions: "{{ subscriptions | default(omit) }}"
     content_overrides: "{{ contentoverrides | default(omit) }}"
-    auto_attach: True
     organization: "{{ satellite_organization }}"
     state: absent
   ignore_errors: yes
@@ -78,7 +77,6 @@
     lifecycle_environment: "{{ test_lifecycleenvironment }}"
     subscriptions: "{{ subscriptions | default(omit) }}"
     content_overrides: "{{ contentoverrides | default(omit) }}"
-    auto_attach: True
     organization: "{{ satellite_organization }}"
     state: absent
   ignore_errors: yes
