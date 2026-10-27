@@ -28,7 +28,7 @@
     product: "{{ item.0.product }}"
     name: "{{ item.1.name }}"
     url: "{{ item.1.url | default('') }}"
-    download_policy: immediate
+    download_policy: "{{ item.1.download_policy | default('immediate') }}"
     mirror_on_sync: true
     content_type: "yum"
     state: absent
